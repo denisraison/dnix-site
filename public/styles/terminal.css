@@ -1,0 +1,160 @@
+/* ---- terminal dock ----
+   Pinned to the bottom of the viewport like an IDE panel. Height is driven by
+   the body dock-* class, animated so collapse/expand slides. */
+.shell {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  border-top: 1px solid var(--faint);
+  box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.35);
+  transition: height 0.22s ease;
+}
+body.dock-collapsed .shell { height: 42px; }
+body.dock-open .shell { height: 46vh; }
+body.dock-full .shell {
+  top: 0;
+  height: auto;
+  border-top: none;
+  box-shadow: none;
+}
+
+/* The grab bar / toggle. It's the whole collapsed strip when collapsed, and
+   the title bar of the panel when open. */
+.dock-handle {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  height: 42px;
+  padding: 0 clamp(12px, 3vw, 24px);
+  background: var(--bg-raise);
+  border: none;
+  border-bottom: 1px solid var(--faint);
+  color: var(--muted);
+  font-family: inherit;
+  font-size: 12px;
+  letter-spacing: 0.03em;
+  text-align: left;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+.dock-handle:hover { color: var(--fg); }
+.dock-grip { color: var(--gold); font-weight: 700; flex: 0 0 auto; }
+.dock-hint { flex: 1 1 auto; }
+.dock-chevron { flex: 0 0 auto; color: var(--blue); transition: transform 0.22s ease; }
+body.dock-open .dock-chevron,
+body.dock-full .dock-chevron { transform: rotate(180deg); }
+/* In full mode the handle collapses to nothing; the terminal owns the screen. */
+body.dock-full .dock-handle { display: none; }
+
+.term {
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  max-width: 920px;
+  margin: 0 auto;
+  padding: clamp(10px, 2vw, 20px) clamp(12px, 3vw, 40px);
+  display: flex;
+  flex-direction: column;
+}
+/* Collapsed: only the handle shows, the terminal body is clipped away. */
+body.dock-collapsed .term { display: none; }
+
+/* Natural height so the prompt hugs the last output line, like a real shell.
+   Once output fills the space it shrinks and scrolls; the prompt ends up at
+   the bottom the same way it does in a full terminal. */
+.screen {
+  flex: 0 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 4px 4px 8px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--faint) transparent;
+}
+.screen::-webkit-scrollbar { width: 6px; }
+.screen::-webkit-scrollbar-thumb { background: var(--faint); border-radius: 3px; }
+
+.line { white-space: pre-wrap; word-break: break-word; }
+
+/* command echo */
+.cmd-echo { color: var(--white); }
+.prompt-sym { color: var(--gold); }
+.prompt-user { color: var(--blue); }
+.prompt-host { color: var(--blue); }
+
+/* ---- input row ---- */
+.inputrow {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 6px 4px 2px;
+  flex: 0 0 auto;
+  margin-bottom: auto; /* free space goes below the prompt; tmux bar stays pinned */
+}
+.ps1 { flex: 0 0 auto; white-space: nowrap; }
+#cmdline {
+  flex: 0 1 auto;
+  width: 2px;
+  min-width: 2px;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--white);
+  font: inherit;
+  caret-color: transparent;
+  padding: 0;
+}
+/* block cursor, sits right after the typed text */
+.cursor {
+  display: inline-block;
+  width: 9px;
+  height: 1.05em;
+  background: var(--fg);
+  transform: translateY(2px);
+  animation: blink 1.05s steps(1) infinite;
+  flex: 0 0 auto;
+}
+@keyframes blink { 50% { opacity: 0; } }
+
+/* ---- tmux status bar ---- */
+.tmuxbar {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 10px;
+  padding: 4px 10px;
+  background: var(--bg-raise);
+  border-radius: 3px;
+  color: var(--muted);
+  font-size: 11.5px;
+  letter-spacing: 0.02em;
+}
+.tm-sess { color: var(--blue); flex: 0 0 auto; }
+.tm-windows {
+  display: flex;
+  gap: 12px;
+  flex: 1 1 auto;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.tm-windows::-webkit-scrollbar { display: none; }
+.tm-win { cursor: pointer; white-space: nowrap; }
+.tm-win:hover { color: var(--fg); }
+.tm-win.active { color: var(--bg); background: var(--blue); padding: 0 5px; border-radius: 2px; }
+.tm-right { flex: 0 0 auto; margin-left: auto; display: flex; gap: 10px; }
+
+@media (max-width: 560px) {
+  .tm-host { display: none; }
+  body.dock-open .shell { height: 62vh; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cursor { animation: none !important; }
+}

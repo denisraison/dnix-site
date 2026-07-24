@@ -1,0 +1,6 @@
+# Everyone welcome, AI crawlers included. The page is JS-rendered;
+# /llms.txt carries the content for fetchers that don't run it.
+User-agent: *
+Allow: /
+
+Sitemap: https://dnix.io/sitemap.xml

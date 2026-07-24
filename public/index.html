@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>dnix · Denis Santos, senior full-stack engineer</title>
+<meta name="description" content="Denis Santos, senior full-stack engineer in Brisbane. Product engineer at heart: backend at scale, custom sites and product UIs, shipped to real users. The site is a working terminal." />
+<!-- Link unfurl for Slack / LinkedIn / email. Text-only card, no image (v1). -->
+<meta property="og:type" content="profile" />
+<meta property="og:url" content="https://dnix.io" />
+<meta property="og:title" content="dnix · Denis Santos, senior full-stack engineer" />
+<meta property="og:description" content="Product engineer at heart: backend at scale, custom sites and product UIs, shipped to real users. The site is a working terminal, type around." />
+<meta property="og:site_name" content="dnix" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="dnix · Denis Santos, senior full-stack engineer" />
+<meta name="twitter:description" content="Senior full-stack engineer in Brisbane. Backend at scale, custom sites and product UIs, shipped for real. The site is a working terminal, type around." />
+<link rel="canonical" href="https://dnix.io/" />
+<!-- The page is JS-rendered, so this block plus /llms.txt is what raw-HTML
+     crawlers (most AI ones) get. Keep it in sync with js/data.js. -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "@id": "https://dnix.io/#denis",
+  "name": "Denis Santos",
+  "jobTitle": "Senior Full-Stack Engineer",
+  "description": "Senior full-stack engineer in Brisbane, product engineer at heart. Backend at scale (real-time ad serving, sub-millisecond decisioning at millions of requests a second, as a Senior Staff Engineer) plus custom sites and product UIs shipped to real users.",
+  "url": "https://dnix.io/",
+  "email": "mailto:denis@dnix.io",
+  "address": { "@type": "PostalAddress", "addressLocality": "Brisbane", "addressCountry": "AU" },
+  "knowsAbout": ["Go", "TypeScript", "Node.js", "Python", "PostgreSQL", "SvelteKit", "React", "API design", "payments and billing", "system design", "AI agent pipelines and evals"],
+  "sameAs": [
+    "https://github.com/denisraison",
+    "https://www.linkedin.com/in/denisraison"
+  ]
+}
+</script>
+<!-- Inline favicon: terminal prompt on dark, no external request. -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2032%2032'%3E%3Crect%20width='32'%20height='32'%20rx='6'%20fill='%230f1113'/%3E%3Ctext%20x='6'%20y='23'%20font-family='monospace'%20font-size='20'%20font-weight='700'%20fill='%237fb1d8'%3E%3E_%3C/text%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles/base.css" />
+<link rel="stylesheet" href="styles/terminal.css" />
+<link rel="stylesheet" href="styles/site.css" />
+</head>
+<body class="dock-full">
+  <!-- traditional page, rendered from js/data.js up front (crawlable) -->
+  <main class="site" id="site"></main>
+
+  <!-- terminal, docked to the bottom of the page like an IDE panel.
+       three states carried on body: dock-collapsed / dock-open / dock-full -->
+  <div class="shell" id="shell">
+    <button class="dock-handle" id="dockhandle" type="button" aria-label="toggle terminal">
+      <span class="dock-grip">$_</span>
+      <span class="dock-hint" id="dockhint">terminal</span>
+      <span class="dock-chevron" id="dockchevron" aria-hidden="true">▴</span>
+    </button>
+    <div class="term">
+      <div class="screen" id="screen" aria-live="polite"></div>
+      <div class="inputrow" id="inputrow" style="display:none">
+        <span class="ps1"><span class="prompt-user">guest</span><span class="muted">@</span><span class="prompt-host">dnix</span><span class="muted">:</span><span class="blue">~</span><span class="prompt-sym">$</span></span>
+        <input id="cmdline" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="terminal input" />
+        <span class="cursor" id="cursor"></span>
+      </div>
+      <div class="tmuxbar">
+        <span class="tm-sess">[dnix]</span>
+        <div class="tm-windows" id="tmwindows"></div>
+        <span class="tm-right"><span class="tm-host">guest@dnix.io</span><span id="clock"></span></span>
+      </div>
+    </div>
+  </div>
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>

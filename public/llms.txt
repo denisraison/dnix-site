@@ -1,0 +1,32 @@
+# dnix
+
+> Denis Santos, a senior full-stack engineer in Brisbane and a product engineer at heart. He builds the whole thing and cares that it ships and works for the person using it, not just that the code is correct. Backend depth from years on real-time ad serving; product work taken end to end, custom sites and product UIs built to ship.
+
+dnix.io itself is an interactive terminal. This file mirrors what the site renders, for readers that don't run JavaScript. Say "dnix" fast and it's just his name.
+
+## Who
+
+Denis Santos, senior full-stack engineer, Brisbane, Australia. A product engineer at heart: he builds the whole thing and cares whether it ships and works for the person using it, not just that the code is correct. Backend depth from years on real-time bid decisioning and sub-millisecond ad serving at millions of requests a second, most recently as a Senior Staff Engineer. On the product side he takes things end to end, custom sites and product UIs designed and built to ship. Most of his work now runs with AI agents in the loop, on tooling he built and a review bar he keeps.
+
+He also takes scoped overflow tickets from agencies (per-hour or fixed-per-ticket, under the client's review), but that's a way he works, not what the site is about.
+
+## Live work
+
+- [Guardians Gamers](https://guardiansgamers.com): a gaming platform built around one verified account per person, to make bad behaviour actually cost something. Passkeys, real-time lobbies, a Go service tracking Dota 2 matches. Live with real users.
+- [Precision Coat](https://precisioncoatpainting.com.au): custom site for a Gold Coast trade business, built and shipped, in production winning the client real leads.
+
+## Tools he built
+
+- [gitknown](https://github.com/denisraison/gitknown): Go CLI for running coding agents at scale. Shows which git worktrees have uncommitted or unpushed work.
+- [claude-plugins](https://github.com/denisraison/claude-plugins): the plugins and tooling he runs his agents with.
+
+## Stack
+
+Core: Go, TypeScript, Node, Python, Postgres. Backend: API design, payments and billing (Stripe, Pix), integrations, system design, code audit. Frontend and product: React, Next.js, SvelteKit, Tailwind, custom sites and product UIs. AI and testing: LLM/RAG workflows, agent pipelines, evals, Playwright/E2E, data pipelines/ETL.
+
+## Contact
+
+- Email: denis@dnix.io
+- GitHub: https://github.com/denisraison
+- LinkedIn: https://www.linkedin.com/in/denisraison
+- Location: Brisbane, Australia (UTC+10), async-first, works with any timezone
