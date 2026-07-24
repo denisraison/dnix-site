@@ -10,6 +10,17 @@ export const LOGO =
 | (_| | | | | |>  <
  \\__,_|_| |_|_/_/\\_\\`;
 
+// The primary commands, in order. Single source for the `help` listing and the
+// tmux window bar, so the two can't drift on membership or order.
+// [command, one-line help]
+export const NAV = [
+  ["whoami", "who I am and what I do"],
+  ["projects", "live products and the tools I built"],
+  ["stack", "what I build with"],
+  ["work", "working with me on scoped tickets"],
+  ["contact", "email, github, linkedin"],
+];
+
 export const DATA = {
   brand: "dnix",
   tagline: "senior full-stack + product engineer",

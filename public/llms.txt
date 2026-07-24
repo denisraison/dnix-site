@@ -12,7 +12,7 @@ He also takes scoped overflow tickets from agencies (per-hour or fixed-per-ticke
 
 ## Live work
 
-- [Guardians Gamers](https://guardiansgamers.com): a gaming platform built around one verified account per person, to make bad behaviour actually cost something. Passkeys, real-time lobbies, a Go service tracking Dota 2 matches. Live with real users.
+- [Guardian Gamers](https://guardiansgamers.com): a gaming platform built around one verified account per person, to make bad behaviour actually cost something. Passkeys, real-time lobbies, a Go service tracking Dota 2 matches. Live with real users.
 - [Precision Coat](https://precisioncoatpainting.com.au): custom site for a Gold Coast trade business, built and shipped, in production winning the client real leads.
 
 ## Tools he built
@@ -22,7 +22,7 @@ He also takes scoped overflow tickets from agencies (per-hour or fixed-per-ticke
 
 ## Stack
 
-Core: Go, TypeScript, Node, Python, Postgres. Backend: API design, payments and billing (Stripe, Pix), integrations, system design, code audit. Frontend and product: React, Next.js, SvelteKit, Tailwind, custom sites and product UIs. AI and testing: LLM/RAG workflows, agent pipelines, evals, Playwright/E2E, data pipelines/ETL.
+Deepest in: Go, TypeScript, Postgres, high-throughput backend, system design. Also ships with: Node, Python, React, Next.js, SvelteKit. And: payments (Stripe, Pix), code audit, agent pipelines and evals, Playwright/E2E.
 
 ## Contact
 

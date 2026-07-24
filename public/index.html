@@ -57,7 +57,10 @@
       <span class="dock-chevron" id="dockchevron" aria-hidden="true">▴</span>
     </button>
     <div class="term">
-      <div class="screen" id="screen" aria-live="polite"></div>
+      <!-- aria-live is set to polite in setReady (terminal.js), AFTER the boot
+           typing animation, so screen readers hear command output not the
+           character-by-character login sequence. -->
+      <div class="screen" id="screen"></div>
       <div class="inputrow" id="inputrow" style="display:none">
         <span class="ps1"><span class="prompt-user">guest</span><span class="muted">@</span><span class="prompt-host">dnix</span><span class="muted">:</span><span class="blue">~</span><span class="prompt-sym">$</span></span>
         <input id="cmdline" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="terminal input" />

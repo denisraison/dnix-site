@@ -105,6 +105,30 @@ test('serves the static crawler files', async ({ request }) => {
   }
 });
 
+// The crawler surface (llms.txt, JSON-LD) is hand-mirrored from data.js. This
+// guards the mirrors against the drift a code review caught once: a
+// "Guardians Gamers" typo and an email/name mismatch shipping to crawlers.
+test('crawler surface agrees with the rendered site', async ({ page, request }) => {
+  await page.goto('/?view=term');
+  const projectNames = await page.locator('#site .card-name').allTextContents();
+  const html = await page.content();
+  const llms = await (await request.get('/llms.txt')).text();
+
+  // Both live products must be named identically across page, llms.txt, JSON-LD.
+  for (const name of ['Guardian Gamers', 'Precision Coat']) {
+    expect(projectNames, 'rendered page').toContain(name);
+    expect(llms, 'llms.txt').toContain(name);
+  }
+  // The old typo must not resurface anywhere on the crawler surface.
+  expect(llms).not.toContain('Guardians Gamers');
+  expect(html).not.toContain('Guardians Gamers');
+
+  // One email everywhere, no stale gmail.
+  expect(llms).toContain('denis@dnix.io');
+  expect(html).toContain('mailto:denis@dnix.io');
+  expect(html).not.toContain('deeraison@gmail.com');
+});
+
 test('has no horizontal overflow on a phone viewport', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await bootedTerminal(page);

@@ -187,6 +187,9 @@ export function createTerminal({ screen, input, inputrow, onExec }) {
   function setReady({ focus = true } = {}) {
     ready = true;
     inputrow.style.display = 'flex';
+    // Announce command output from here on, but not the boot typing that ran
+    // before this point (screen readers would replay it char by char).
+    screen.setAttribute('aria-live', 'polite');
     positionCursor();
     if (focus) {
       input.focus();
