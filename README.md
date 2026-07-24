@@ -1,82 +1,87 @@
 # dnix.io
 
-Denis Santos's personal site. Say "dnix" fast and it's just the name.
+My personal site. dnix is just my name said fast.
 
-It's a real interactive terminal. The page renders as a normal portfolio, with
-the terminal docked at the bottom like an IDE panel: a collapsed strip you can
-click to open, or `?view=term` for the full-screen shell. You `ssh guest@dnix.io`,
-get a motd, and type (`help`, `whoami`, `projects`, `work`, `contact`). Both the
-page and the terminal render from the same data, so copy can't drift between them.
+It's a real terminal. The page loads as a normal portfolio and the terminal
+sits docked at the bottom like the one in your editor. Click the strip to open
+it, or hit `/?view=term` if you just want the full-screen shell. It boots with
+`ssh guest@dnix.io`, prints a motd, and then you can type: `help`, `whoami`,
+`projects`, `work`, `contact`. The page and the terminal both read from the
+same content, so I only write the copy once and it can't go out of sync.
 
-Live: https://dnix.io
+Live at https://dnix.io.
 
-## Design
+## Why it's built this way
 
-No framework, no build step, no dependencies. Native ES modules; the source
-is the artifact. That's a choice: a personal site doesn't earn a toolchain,
-and the unminified source doubles as the work sample.
+No framework and no build step. Nothing to install. It's just ES modules the
+browser loads directly. I wanted the source to be readable, since half the
+point of the site is showing how I work, and a build pipeline would bury that
+under generated output. So what you see in `public/` is exactly what ships.
 
-Fully typechecked anyway: JSDoc annotations under `tsc --noEmit` with
-`strict` on (see `tsconfig.json`). Typechecking and transpilation are
-separate concerns; this repo only needs the first.
+It's still fully typed. I write JSDoc on the plain JS and run `tsc --noEmit`
+with strict on to check it (`tsconfig.json`). I want the type safety, I just
+don't need tsc to emit anything, the browser runs the source as-is.
 
 ```
 public/               exactly what ships, nothing else
-  index.html          markup shell + JSON-LD
-  robots.txt          crawlers welcome, points at the sitemap
+  index.html          the markup shell + JSON-LD
+  robots.txt          points at the sitemap
   sitemap.xml         one URL
   llms.txt            the content as markdown, for AI crawlers
   styles/
     base.css          tokens, utilities, dock/page chrome
-    terminal.css      dock, prompt, tmux status bar
-    site.css          the traditional page view
+    terminal.css      the dock, prompt, tmux status bar
+    site.css          the normal page view
   js/
-    data.js           ALL content — the only file to touch for copy changes
-    terminal.js       shell engine: print, input, history, tab-complete
-    commands.js       the command set, content-over-DATA
-    boot.js           ssh login sequence
-    tmux.js           status bar: clickable command windows, clock
-    site.js           traditional page renderer
-    view.js           dock state (collapsed/open/full), ?view= links, persistence
-    main.js           entry: wires the above
-    util.js           escaping, delay, byId, reduced-motion flag
-tests/                Playwright E2E against the served page
+    data.js           all the content — the only file I touch for copy changes
+    terminal.js       the shell engine: print, input, history, tab-complete
+    commands.js       the commands, reading from data.js
+    boot.js           the ssh login sequence
+    tmux.js           the status bar: clickable window numbers, clock
+    site.js           renders the normal page view
+    view.js           dock state (collapsed/open/full), ?view= links, memory
+    main.js           wires it all together
+    util.js           escaping, delay, byId, the reduced-motion check
+tests/                Playwright, run against the real served page
 ```
 
-Boundaries: `terminal.js` knows nothing about the content, `commands.js` and
-`site.js` know nothing about input handling, `data.js` knows nothing about
-rendering. The primary command list lives once in `data.js` (`NAV`); the
-`help` listing and the tmux window bar both derive from it.
+The modules stay in their lanes. `terminal.js` doesn't know what content it's
+printing. `commands.js` and `site.js` don't touch input handling. `data.js`
+doesn't know anything about how it gets rendered. The list of commands lives in
+one spot (`NAV` in `data.js`) and both the `help` output and the tmux bar read
+from it, so they can't drift apart.
 
 ## Crawlers
 
-A terminal that waits for typed commands is invisible to search engines and
-AI crawlers, so the crawlable surface is explicit: JSON-LD in the head and
-`llms.txt` for raw-HTML fetchers (most AI crawlers don't run JS), plus the
-page view rendering eagerly on load (present even under the full terminal) so
-JS-running crawlers index the full content. `llms.txt` is the one
-hand-maintained mirror of `data.js`; a copy change means touching both.
+A terminal that waits for you to type is invisible to Google and the AI
+crawlers, so I made the content reachable a few ways. There's JSON-LD in the
+head, and `llms.txt` for anything that fetches raw HTML without running JS
+(most AI crawlers). The normal page view also renders on load and stays in the
+DOM even under the full terminal, so anything that does run JS still indexes
+everything. `llms.txt` is the one copy I keep by hand, so when I change wording
+in `data.js` I update it too.
 
-## Run
+## Run it
 
-Any static server pointed at `public/` (ES modules don't load from `file://`):
+Any static server pointed at `public/`. ES modules won't load over `file://`,
+so you do need a server:
 
 ```bash
 nix run .#serve        # or: python3 -m http.server 8000 --directory public
-nix run .#dev          # same, with live-reload on save
+nix run .#dev          # same thing with live-reload when you save
 ```
 
-## Test
+## Tests
 
-End-to-end with Playwright (system-wide here, no node_modules):
+End-to-end with Playwright. It's installed system-wide here, so no node_modules:
 
 ```bash
 playwright test
 ```
 
-Covers the boot sequence, typed commands, tab completion, the tmux window
-bar, the dock states, `exit` (collapse + re-boot), view persistence, the
-crawlable-content invariant, and mobile overflow.
+Covers the boot sequence, typing commands, tab completion, the tmux bar, the
+dock states, `exit` (it collapses and re-boots clean), the view sticking across
+reloads, the crawler content being present, and no sideways scroll on a phone.
 
 Typecheck:
 
@@ -86,7 +91,7 @@ nix flake check       # or: tsc --noEmit
 
 ## Deploy
 
-Cloudflare Pages, direct upload:
+Cloudflare Pages, straight upload:
 
 ```bash
 nix run .#deploy       # or: wrangler pages deploy public --project-name dnix
