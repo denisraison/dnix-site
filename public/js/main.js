@@ -17,6 +17,7 @@ try {
   renderSite({
     head: byId('herohead'),
     hint: byId('hint'),
+    actions: byId('heroactions'),
     shelf: byId('pane-shelf'),
     auction: byId('pane-auction'),
     scrollback: byId('scrollback'),

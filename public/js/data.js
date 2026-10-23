@@ -5,12 +5,12 @@
 
 // The tmux windows, in order. Single source for the status bar, the top of the
 // `help` listing and the scrollback sections, so they can't drift apart.
-// [command, one-line help]
+// [command, one-line help, plain label for the phone bar]
 export const NAV = [
-  ["whoami", "who I am and what I do"],
-  ["work", "making sense of your retail media spend"],
-  ["tools", "the tools I built for my own work"],
-  ["contact", "email, github, linkedin"],
+  ["whoami", "who I am and what I do", "about"],
+  ["work", "making sense of your retail media spend", "work"],
+  ["tools", "the tools I built for my own work", "tools"],
+  ["contact", "email, github, linkedin", "contact"],
 ];
 
 // Commands that work but don't get a window. [command, one-line help]
@@ -28,6 +28,9 @@ export const DATA = {
   // What the hero prompt holds until you type. Enter runs it.
   prefill: "mail denis@dnix.io",
   promptHint: "press enter to email me about a 20-minute chat, or type help to look around.",
+  // The phone hero has no shell, just this.
+  mailCta: "Email me",
+  mailNote: "A 20-minute chat about your retail media spend. No reports needed.",
   mailSubject: "20 minutes",
   // Career cred deliberately names the role, not the employers: past work is
   // verifiable via the LinkedIn link, and the current day job stays out of it.

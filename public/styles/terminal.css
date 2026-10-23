@@ -132,10 +132,12 @@
 .tm-win.active:focus-visible { outline-color: var(--sun); }
 .tm-prefix { align-self: center; padding: 0 0.75ch; background: var(--ink); color: var(--paper); font-weight: 700; }
 .tm-prefix[hidden] { display: none; }
+.tm-label { display: none; }
 .tm-right { flex: 0 0 auto; align-self: center; display: flex; gap: 2ch; }
 
 @media (max-width: 899px) {
-  .tm-host, #clock { display: none; }
+  .tm-host, #clock, .tm-sess, .tm-cmd { display: none; }
+  .tm-label { display: inline; }
   .tmuxbar { font-stretch: 75%; }
   .tm-win { padding: 0 0.75ch; }
   .enter { flex: 1 0 100%; min-height: 52px; }

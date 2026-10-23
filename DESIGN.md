@@ -173,9 +173,9 @@ Four colours, each owning a whole field, plus three dim or hover inks derived fo
 
 At 900px and up the session is a grid filling the viewport above the status bar: the hero pane spans two thirds on the left across both rows, the auction pane sits top right and the Shelf pane bottom right, with the right column at least 360px. Panes are separated by a 4px ink gutter. The hero pane pads with `clamp(20px, 3vw, 44px)`, the side panes with `clamp(20px, 1.75vw, 24px)`. The hero's prompt sits at the bottom of its pane with output stacking up above it like a real shell.
 
-Below 900px the panes stack: hero first, tall enough to leave a strip of the Shelf pane showing so the page reads as scrollable; then Shelf; then the auction log trimmed to six lines. The status bar grows to 48px, the Enter key goes full width at 52px, and the hero's inner scroller is released so the thumb scrolls the page, never a trapped box.
+Below 900px the panes stack: hero, Shelf, then the auction log trimmed to six lines. The terminal is a desktop thing: on a phone the hero drops the shell (login lines, prompt, hint) and holds the headline, the byline and one full-width 52px "Email me" mail link, sized to its content so the Shelf numbers land in the first screen. Panes do not dim on phones, since touch has no pane focus. The status bar grows to 48px.
 
-The tmux status bar is fixed to the bottom edge on every size: session name, numbered windows, host and clock (host and clock drop on phones).
+The tmux status bar is fixed to the bottom edge on every size: session name, numbered windows, host and clock. On phones it becomes plain navigation: no session name, host or clock, the windows read `about`, `work`, `tools`, `contact`, a tap jumps to that scrollback section, and the active mark follows the scroll.
 
 Scrollback runs on the ink frame below the session at 76ch, with sections spaced `clamp(56px, 7vw, 88px)` apart. Definition lists use a fixed term column (18ch for offer and tools, 10ch for contact) that collapses to one column on phones.
 
@@ -234,7 +234,8 @@ Headings read as commands: a yellow `$`, the section name in headline type, then
 - **Do** write labels and headings as terminal lines: `$ command`, `# comment`, tmux window names.
 - **Do** keep every pane's content in the DOM and readable without typing.
 - **Do** show the final frame with no animation under `prefers-reduced-motion`.
-- **Do** keep tap targets at 44px or more and the prompt in thumb reach on phones.
+- **Do** keep tap targets at 44px or more and the email link in thumb reach on phones.
+- **Don't** ask a phone visitor to type: no prompt, no commands, no keyboard.
 
 ### Don't:
 - **Don't** use cards, rounded chips or pills, glow, scanlines, gradients or shadows.

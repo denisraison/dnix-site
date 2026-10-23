@@ -10,15 +10,21 @@ import { NAV } from './data.js';
  * @param {(name: string) => void} opts.onSelect
  */
 export function initTmux({ windowsEl, clockEl, onSelect }) {
-  const wins = NAV.map(([name, help], i) => {
+  const wins = NAV.map(([name, help, label], i) => {
     const el = document.createElement('button');
     el.type = 'button';
     el.className = 'tm-win';
-    el.textContent = `${i}:${name}`;
     el.title = help;
+    const cmd = document.createElement('span');
+    cmd.className = 'tm-cmd';
+    cmd.textContent = `${i}:${name}`;
+    const plain = document.createElement('span');
+    plain.className = 'tm-label';
+    plain.textContent = label ?? name;
+    el.append(cmd, plain);
     el.addEventListener('click', () => onSelect(name));
     windowsEl.appendChild(el);
-    return { name, i, el };
+    return { name, i, el, cmd };
   });
 
   /**
@@ -29,7 +35,7 @@ export function initTmux({ windowsEl, clockEl, onSelect }) {
     for (const w of wins) {
       const active = w.name === name;
       w.el.classList.toggle('active', active);
-      w.el.textContent = `${w.i}:${w.name}${active ? '*' : ''}`;
+      w.cmd.textContent = `${w.i}:${w.name}${active ? '*' : ''}`;
       if (active) {
         w.el.setAttribute('aria-current', 'true');
       } else {

@@ -35,11 +35,12 @@ export function tailLog(auction) {
  * @param {Object} els
  * @param {HTMLElement} els.head
  * @param {HTMLElement} els.hint
+ * @param {HTMLElement} els.actions
  * @param {HTMLElement} els.shelf
  * @param {HTMLElement} els.auction
  * @param {HTMLElement} els.scrollback
  */
-export function renderSite({ head, hint, shelf, auction, scrollback }) {
+export function renderSite({ head, hint, actions, shelf, auction, scrollback }) {
   const c = DATA.contact;
   const f = DATA.finding;
   const live = DATA.projects.find((p) => p.tag.startsWith('live'));
@@ -50,6 +51,9 @@ export function renderSite({ head, hint, shelf, auction, scrollback }) {
     <h1 class="headline">${DATA.headline.map((s) => `<span>${esc(s)}</span>`).join(' ')}</h1>
     <p class="byline">${esc(DATA.name)} · ${esc(DATA.tagline)}</p>`;
   hint.textContent = DATA.promptHint;
+  actions.innerHTML = `
+    <a class="hero-mail" href="mailto:${esc(c.email)}?subject=${encodeURIComponent(DATA.mailSubject)}">${esc(DATA.mailCta)}</a>
+    <p class="hero-note">${esc(DATA.mailNote)}</p>`;
 
   const slots = (/** @type {number} */ paid, /** @type {number} */ of) =>
     Array.from({ length: of }, (_, i) => `<i class="slot${i < paid ? ' paid' : ''}"></i>`).join('');
@@ -103,5 +107,5 @@ export function renderSite({ head, hint, shelf, auction, scrollback }) {
         <div class="contact-row"><dt>linkedin</dt><dd>${link(c.linkedin)}</dd></div>
         <div class="contact-row"><dt>location</dt><dd>${esc(c.location)}</dd></div>
       </dl>`)}
-    <p class="sb-foot">the yellow pane up top is a real terminal. type <b>help</b> in it.<br />no framework, no build step. view source, that's the artifact.</p>`;
+    <p class="sb-foot">on a computer, the yellow pane up top is a real terminal. type <b>help</b> in it.<br />no framework, no build step. view source, that's the artifact.</p>`;
 }

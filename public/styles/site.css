@@ -62,6 +62,22 @@
 .pane-hero.is-session .headline span { display: inline; }
 .pane-hero.is-session .byline { margin-top: 0.25rem; font-size: var(--t-small); }
 
+/* The phone hero has no shell: one real mail link where the prompt would be. */
+.hero-actions { display: none; }
+.hero-mail {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 52px;
+  background: var(--ink);
+  color: var(--sun);
+  font-weight: 700;
+  text-decoration: none;
+}
+.hero-mail:hover { background: #2a2a28; text-decoration: none; }
+.hero-mail:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+.hero-note { margin-top: 10px; font-size: var(--t-small); }
+
 /* ---- Shelf ---- */
 .pane-shelf { background: var(--paper); color: var(--ink); }
 .pane-shelf ::selection { background: var(--ink); color: var(--paper); }
@@ -179,12 +195,13 @@
 /* ---- phone: stack hero, Shelf, then a trimmed log ---- */
 @media (max-width: 899px) {
   .session { display: flex; flex-direction: column; height: auto; min-height: 0; }
-  /* leaves a strip of the Shelf pane showing, so the page reads as scrollable */
-  .pane-hero { min-height: calc(100svh - var(--bar) - 3.5rem); }
   .ps1-user { display: none; }
   .headline { font-stretch: 87.5%; }
   .offer-row, .tool, .contact-row { grid-template-columns: minmax(0, 1fr); row-gap: 0.25rem; }
   .log-body { flex: none; height: calc(6 * 1.55em); }
+  /* The terminal is a desktop thing; on a phone the hero is the poster and a button. */
+  .pane-hero .screen, .pane-hero .inputrow, .pane-hero .hint { display: none; }
+  .hero-actions { display: block; padding-top: 2rem; }
   /* No pane focus on touch, so nothing dims: a grey Shelf read as switched off. */
   .pane-hero:not(.is-focus), .pane-shelf:not(.is-focus) { color: var(--ink); }
   .pane-auction { --log: var(--paper); }

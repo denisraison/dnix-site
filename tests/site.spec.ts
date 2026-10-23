@@ -9,6 +9,15 @@ async function bootedTerminal(page) {
   return input;
 }
 
+// On a phone there is no shell: the hero is the poster and a mail link.
+async function phoneHero(page) {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  const mail = page.locator('.hero-mail');
+  await expect(mail).toBeVisible();
+  return mail;
+}
+
 test('boots through the ssh login into a live, prefilled prompt', async ({ page }) => {
   const input = await bootedTerminal(page);
   await expect(page.locator('#screen')).toContainText('ssh guest@dnix.io');
@@ -65,7 +74,7 @@ test('tmux windows run their command and take the active mark', async ({ page })
   await bootedTerminal(page);
   await page.locator('.tm-win', { hasText: '1:work' }).click();
   await expect(page.locator('#screen')).toContainText('working with me');
-  await expect(page.locator('.tm-win.active')).toHaveText('1:work*');
+  await expect(page.locator('.tm-win.active .tm-cmd')).toHaveText('1:work*');
   await expect(page.locator('#pane-hero')).toHaveClass(/is-session/);
 });
 
@@ -162,9 +171,8 @@ test('crawler surface agrees with the rendered site', async ({ page, request }) 
 });
 
 test('has no horizontal overflow on a phone viewport', async ({ page }) => {
-  await page.setViewportSize({ width: 390, height: 844 });
-  await bootedTerminal(page);
-  await page.locator('.tm-win', { hasText: '2:tools' }).click();
+  await phoneHero(page);
+  await page.locator('.tm-win', { hasText: 'tools' }).click();
   const overflows = await page.evaluate(
     () => document.documentElement.scrollWidth > document.documentElement.clientWidth,
   );
@@ -202,9 +210,8 @@ test('the wheel over the terminal scrolls the page', async ({ page }) => {
 // On the stacked phone layout the windows navigate: they jump to their section
 // below and leave the hero, and its email button, alone.
 test('phone: windows jump to their section instead of printing', async ({ page }) => {
-  await page.setViewportSize({ width: 390, height: 844 });
-  await bootedTerminal(page);
-  const enterTop = await page.locator('#enter').evaluate((el) => el.getBoundingClientRect().top + scrollY);
+  const mail = await phoneHero(page);
+  const enterTop = await mail.evaluate((el) => el.getBoundingClientRect().top + scrollY);
 
   for (const name of ['work', 'contact']) {
     await page.locator('.tm-win', { hasText: name }).click();
@@ -216,18 +223,28 @@ test('phone: windows jump to their section instead of printing', async ({ page }
     await expect(page.locator('.tm-win.active')).toContainText(name);
   }
   await expect(page.locator('#screen')).not.toContainText('working with me');
-  const enterTopAfter = await page.locator('#enter').evaluate((el) => el.getBoundingClientRect().top + scrollY);
+  const enterTopAfter = await mail.evaluate((el) => el.getBoundingClientRect().top + scrollY);
   expect(enterTopAfter).toBe(enterTop);
 });
 
 test('phone: links are thumb-sized', async ({ page }) => {
-  await page.setViewportSize({ width: 390, height: 844 });
-  await bootedTerminal(page);
-  const heights = await page.locator('.tool dd a, .contact a, .shelf-link').evaluateAll(
+  await phoneHero(page);
+  const heights = await page.locator('.hero-mail, .tool dd a, .contact a, .shelf-link').evaluateAll(
     (els) => els.map((el) => el.getBoundingClientRect().height),
   );
   expect(heights.length).toBeGreaterThan(0);
   for (const h of heights) {
     expect(h).toBeGreaterThanOrEqual(44);
   }
+});
+
+test('phone: no shell in the hero, a real mail link and plain labels instead', async ({ page }) => {
+  const mail = await phoneHero(page);
+  await expect(mail).toHaveAttribute('href', 'mailto:denis@dnix.io?subject=20%20minutes');
+  await expect(page.locator('#cmdline')).toBeHidden();
+  await expect(page.locator('#screen')).toBeHidden();
+  await expect(page.locator('#hint')).toBeHidden();
+  await expect(page.locator('.tm-sess')).toBeHidden();
+  const labels = await page.locator('.tm-win .tm-label').allInnerTexts();
+  expect(labels).toEqual(['about', 'work', 'tools', 'contact']);
 });
