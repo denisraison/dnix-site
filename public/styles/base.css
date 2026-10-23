@@ -1,75 +1,73 @@
-/* Flat terminal palette. Blue is the accent (nix blue, it's in the name);
-   gold is used sparingly for headers and the prompt sigil. No glow anywhere. */
+/* One tmux session, four colours, one face. Colour owns whole pane fields:
+   signal yellow for the hero, near-black for the frame and the log, off-white
+   for Shelf and the status bar. Pink is only ever a paid placement. */
+@font-face {
+  font-family: 'Martian Mono';
+  src: url('../fonts/martian-mono.ttf') format('truetype');
+  font-weight: 100 800;
+  font-stretch: 75% 112.5%;
+  font-display: swap;
+}
+
 :root {
-  --bg: #0f1113;
-  --bg-raise: #171b1d;      /* tmux bar, cards */
-  --fg: #c4cbc7;
-  --muted: #737e7a;
-  --faint: #24292b;         /* borders */
-  --blue: #7fb1d8;
-  --gold: #c9995c;
-  --white: #e9ecea;
+  --ink: #0c0c0b;
+  --sun: #ffd60a;
+  --paid: #ff3d7f;
+  --paper: #f2f2ee;
+  --ash: #8c8c88;           /* 5.8:1 on ink: log comments, dimmed log lines */
+
+  /* four sizes, that's the whole scale */
+  --t-display: clamp(2.5rem, min(5vw, 8.5svh), 6rem);
+  --t-lead: 1.25rem;
+  --t-body: 1rem;
+  --t-small: 0.8125rem;
+
+  --bar: 40px;
+  --gap: 4px;
+  --pad: clamp(20px, 3vw, 44px);
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
-html, body { height: 100%; }
+html {
+  background: var(--ink);
+  scrollbar-color: var(--ash) var(--ink);
+  -webkit-text-size-adjust: 100%;
+}
 
 body {
-  background: var(--bg);
-  color: var(--fg);
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 15px;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: 'Martian Mono', ui-monospace, monospace;
+  font-size: var(--t-body);
   line-height: 1.6;
+  font-variant-numeric: tabular-nums;
   -webkit-font-smoothing: antialiased;
-}
-/* Only the full-screen terminal locks the page; the page itself scrolls. */
-body.dock-full { overflow: hidden; }
-
-::selection { background: var(--blue); color: var(--bg); }
-
-/* color utilities, shared by both views */
-.muted { color: var(--muted); }
-.gold { color: var(--gold); }
-.blue { color: var(--blue); }
-.white { color: var(--white); }
-.dim { opacity: 0.55; }
-
-a { color: var(--blue); text-decoration: none; border-bottom: 1px dotted var(--blue); }
-a:hover { background: var(--blue); color: var(--bg); }
-
-.logo {
-  color: var(--blue);
-  line-height: 1.05;
-  font-size: clamp(9px, 2.1vw, 15px);
-  white-space: pre;
-  margin: 4px 0 2px;
+  padding-bottom: var(--bar);
 }
 
-kbd {
-  border: 1px solid var(--faint);
-  border-radius: 3px;
-  padding: 0 5px;
-  color: var(--fg);
-  font-size: 11px;
+::selection { background: var(--sun); color: var(--ink); }
+
+a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.22em;
+}
+a:hover { text-decoration-thickness: 2px; }
+
+:focus-visible { outline: 2px solid var(--sun); outline-offset: 3px; }
+/* panes show focus by brightness, not a ring */
+.pane:focus-visible { outline: none; }
+
+b { font-weight: 700; }
+
+.noscript {
+  padding: var(--pad);
+  color: var(--paper);
 }
 
-.chip {
-  display: inline-block;
-  border: 1px solid var(--faint);
-  border-radius: 2px;
-  padding: 1px 7px;
-  margin: 2px 4px 2px 0;
-  color: var(--muted);
-  font-size: 12.5px;
-}
-
-/* The page is always in the DOM and always rendered; the terminal docks over
-   it. When the dock is collapsed or open, leave room at the bottom so the
-   page's own footer isn't hidden behind the strip. dock-full hides the page. */
-.site { display: block; padding-bottom: 96px; }
-body.dock-full .site { visibility: hidden; }
-
-@media (max-width: 560px) {
-  body { font-size: 13.5px; }
+@media (max-width: 899px) {
+  :root { --bar: 48px; --t-body: 0.9375rem; --pad: 20px; }
 }

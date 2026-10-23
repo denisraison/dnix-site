@@ -1,11 +1,7 @@
-// The status bar: session name, the commands as clickable numbered windows
-// (active one gets tmux's inverted highlight and a `*`), host and clock.
+// The status bar: session name, the NAV commands as numbered windows (the
+// active one gets tmux's inverted block and a `*`), host and clock.
 
 import { NAV } from './data.js';
-
-// `help` leads (window 0), then the shared NAV order — one source with the
-// help listing, so the bar and `help` can't disagree on membership or order.
-const WINDOWS = ['help', ...NAV.map(([name]) => name)];
 
 /**
  * @param {Object} opts
@@ -14,10 +10,12 @@ const WINDOWS = ['help', ...NAV.map(([name]) => name)];
  * @param {(name: string) => void} opts.onSelect
  */
 export function initTmux({ windowsEl, clockEl, onSelect }) {
-  const wins = WINDOWS.map((name, i) => {
-    const el = document.createElement('span');
+  const wins = NAV.map(([name, help], i) => {
+    const el = document.createElement('button');
+    el.type = 'button';
     el.className = 'tm-win';
     el.textContent = `${i}:${name}`;
+    el.title = help;
     el.addEventListener('click', () => onSelect(name));
     windowsEl.appendChild(el);
     return { name, i, el };
@@ -32,6 +30,11 @@ export function initTmux({ windowsEl, clockEl, onSelect }) {
       const active = w.name === name;
       w.el.classList.toggle('active', active);
       w.el.textContent = `${w.i}:${w.name}${active ? '*' : ''}`;
+      if (active) {
+        w.el.setAttribute('aria-current', 'true');
+      } else {
+        w.el.removeAttribute('aria-current');
+      }
     }
   }
 

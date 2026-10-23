@@ -1,71 +1,107 @@
-// The traditional view: DATA rendered as a scrollable page, for visitors
-// who'd rather read than type.
+// The page itself: the hero heading, the Shelf and auction panes, and the
+// scrollback under the first screen, all from DATA. This is the text crawlers
+// read, so none of it waits for typing.
 
-import { DATA, LOGO } from './data.js';
+import { DATA, NAV } from './data.js';
 import { escapeHtml as esc } from './util.js';
 
-/** @param {HTMLElement} container */
-export function renderSite(container) {
-  /** @param {typeof DATA.projects[number]} p */
-  const card = (p) => `
-    <div class="card">
-      <div class="card-head">
-        <span class="card-name">${esc(p.name)}</span>
-        <span class="chip">${esc(p.tag)}</span>
-      </div>
-      <div class="card-desc">${esc(p.desc)}</div>
-      ${p.url ? `<a href="https://${esc(p.url.replace(/^https?:\/\//, ''))}" target="_blank" rel="noopener">${esc(p.url)}</a>` : ''}
-    </div>`;
+// The replay's pacing, ms: a beat before the first line, then one line per tick.
+const LOG_START = 350;
+const LOG_TICK = 140;
 
-  // Live bucket leads with Precision Coat here (the normal-site view is the
-  // agency owner's skim); the terminal `projects` leads with GG. Split by tag.
-  const live = DATA.projects.filter((p) => p.tag.startsWith('live'));
-  const tools = DATA.projects.filter((p) => !p.tag.startsWith('live'));
-  const leadFirst = [...live].sort((a, b) => (a.name === 'Precision Coat' ? -1 : b.name === 'Precision Coat' ? 1 : 0));
-  const liveCards = leadFirst.map(card).join('');
-  const toolCards = tools.map(card).join('');
+/**
+ * The log body clips from the top like `tail`; this hides any line the clip
+ * would cut through, so the oldest visible line is always whole.
+ * @param {HTMLElement} auction
+ */
+export function tailLog(auction) {
+  const body = auction.querySelector('.log-body');
+  const log = auction.querySelector('.log');
+  if (!(body instanceof HTMLElement) || !log) {
+    return;
+  }
+  const fit = () => {
+    for (const line of log.children) {
+      const el = /** @type {HTMLElement} */ (line);
+      el.style.visibility = el.offsetTop < 0 ? 'hidden' : '';
+    }
+  };
+  const ro = new ResizeObserver(fit);
+  ro.observe(body);
+  ro.observe(log);
+}
 
-  const stack = Object.entries(DATA.stack).map(([group, items]) => `
-    <div class="stackgroup">
-      <span class="label">${esc(group)}</span>
-      ${items.map((it) => `<span class="chip">${esc(it)}</span>`).join('')}
-    </div>`).join('');
-
-  const model = DATA.model.map(([k, v]) => `
-    <div class="modelrow"><span class="k">${esc(k)}</span><span class="v">${esc(v)}</span></div>`).join('');
-
+/**
+ * @param {Object} els
+ * @param {HTMLElement} els.head
+ * @param {HTMLElement} els.hint
+ * @param {HTMLElement} els.shelf
+ * @param {HTMLElement} els.auction
+ * @param {HTMLElement} els.scrollback
+ */
+export function renderSite({ head, hint, shelf, auction, scrollback }) {
   const c = DATA.contact;
-  container.innerHTML = `
-    <section class="site-hero">
-      <div class="site-logo">${LOGO}</div>
-      <div class="site-tagline">${esc(DATA.brand)} :: ${esc(DATA.tagline)}</div>
-      ${DATA.who.map((para) => `<p class="site-lede">${esc(para)}</p>`).join('')}
-    </section>
+  const f = DATA.finding;
+  const live = DATA.projects.find((p) => p.tag.startsWith('live'));
+  const link = (/** @type {string} */ url) =>
+    `<a href="https://${esc(url)}" target="_blank" rel="noopener">${esc(url)}</a>`;
 
-    <h2>selected work</h2>
-    <p class="sub" style="margin-bottom:16px">live products, then the tools I built for my own work.</p>
-    ${liveCards}
-    ${toolCards}
+  head.innerHTML = `
+    <h1 class="headline">${DATA.headline.map((s) => `<span>${esc(s)}</span>`).join(' ')}</h1>
+    <p class="byline">${esc(DATA.name)} · ${esc(DATA.tagline)}</p>`;
+  hint.textContent = DATA.promptHint;
 
-    <h2>stack</h2>
-    ${stack}
+  const slots = (/** @type {number} */ paid, /** @type {number} */ of) =>
+    Array.from({ length: of }, (_, i) => `<i class="slot${i < paid ? ' paid' : ''}"></i>`).join('');
+  shelf.innerHTML = `
+    <h2 class="shelf-name" id="shelf-title">${esc(live?.name ?? '')}</h2>
+    <p class="shelf-lede">${esc(f.lede)}</p>
+    <dl class="finding">
+      ${f.rows.map((r) => `
+        <div class="finding-row">
+          <dt>${esc(r.retailer)}</dt>
+          <dd><span class="count">${r.sponsored} of ${r.of} sponsored</span><span class="slots" aria-hidden="true">${slots(r.sponsored, r.of)}</span></dd>
+        </div>`).join('')}
+    </dl>
+    <a class="shelf-link" href="${esc(f.url)}">${esc(f.cta)} at shelf.dnix.io</a>`;
 
-    <h2>working with me</h2>
-    <p class="sub" style="margin-bottom:14px">I take on scoped client work: one hard, well-defined piece at a time, done properly and shipped. Here's how that goes.</p>
-    ${model}
+  // The first comment line stays pinned so the "synthetic" label is always on
+  // screen; the rest tails into the space left, oldest lines clipped first.
+  const [label, ...rest] = DATA.auction;
+  /** @param {typeof DATA.auction[number]} line @param {number} i */
+  const logLine = ([ts, text, kind], i) =>
+    `<div class="log-line ${kind}" style="--d:${LOG_START + i * LOG_TICK}ms"><span class="ts">${esc(ts)}</span><span class="msg">${esc(text)}</span></div>`;
+  auction.innerHTML = `
+    <p class="pane-title">$ tail -f auction.log</p>
+    <div class="log-head">${logLine(label, 0)}</div>
+    <div class="log-body"><div class="log">${rest.map((l, i) => logLine(l, i + 1)).join('')}</div></div>`;
 
-    <div class="site-cta">
-      <div class="big">Got a ticket? Email me and I'll tell you straight whether it's a fit and what it'd take.</div>
-      <div class="contactgrid">
-        <div class="row"><span class="ck">email</span><a href="mailto:${esc(c.email)}">${esc(c.email)}</a></div>
-        <div class="row"><span class="ck">github</span><a href="https://${esc(c.github)}" target="_blank" rel="noopener">${esc(c.github)}</a></div>
-        <div class="row"><span class="ck">linkedin</span><a href="https://${esc(c.linkedin)}" target="_blank" rel="noopener">${esc(c.linkedin)}</a></div>
-        <div class="row"><span class="ck">location</span><span class="muted">${esc(c.location)}</span></div>
-      </div>
-    </div>
+  /** @param {string} name @param {string} body */
+  const section = (name, body) => {
+    const note = NAV.find(([n]) => n === name)?.[1] ?? '';
+    return `
+    <section class="sb" id="sb-${name}" aria-labelledby="sb-${name}-h">
+      <h2 id="sb-${name}-h"><span class="sb-ps" aria-hidden="true">$ </span>${esc(name)} <span class="sb-note"># ${esc(note)}</span></h2>
+      ${body}
+    </section>`;
+  };
 
-    <div class="site-foot">
-      that dock at the bottom is a real terminal <span class="prompt-sym">$</span> open it and type <b class="blue">help</b>.<br />
-      no framework, no build step. view source, that's the artifact.
-    </div>`;
+  const tools = DATA.projects.filter((p) => p.tag.startsWith('tool'));
+  scrollback.innerHTML = `
+    ${section('whoami', DATA.who.map((p) => `<p class="sb-p">${esc(p)}</p>`).join(''))}
+    ${section('work', `
+      <p class="sb-p">I help brands make sense of their retail media spend. Here's how that starts.</p>
+      <dl class="offer">${DATA.model.map(([k, v]) => `<div class="offer-row"><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl>`)}
+    ${section('tools', `
+      <dl class="tools">${tools.map((p) => `
+        <div class="tool"><dt>${esc(p.name)} <span class="sb-note">${esc(p.tag)}</span></dt><dd>${esc(p.desc)} ${link(p.url)}</dd></div>`).join('')}</dl>`)}
+    ${section('contact', `
+      <p class="sb-cta">${esc(DATA.cta)}</p>
+      <dl class="contact">
+        <div class="contact-row"><dt>email</dt><dd><a href="mailto:${esc(c.email)}?subject=${encodeURIComponent(DATA.mailSubject)}">${esc(c.email)}</a></dd></div>
+        <div class="contact-row"><dt>github</dt><dd>${link(c.github)}</dd></div>
+        <div class="contact-row"><dt>linkedin</dt><dd>${link(c.linkedin)}</dd></div>
+        <div class="contact-row"><dt>location</dt><dd>${esc(c.location)}</dd></div>
+      </dl>`)}
+    <p class="sb-foot">the yellow pane up top is a real terminal. type <b>help</b> in it.<br />no framework, no build step. view source, that's the artifact.</p>`;
 }

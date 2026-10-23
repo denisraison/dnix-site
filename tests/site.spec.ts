@@ -1,28 +1,49 @@
 import { test, expect } from '@playwright/test';
 
-// The boot sequence types `ssh guest@dnix.io` and prints a motd before the
-// prompt appears, so "wait for the input" is "wait for boot to finish".
+// The login prints two ssh lines and then shows the prompt, prefilled with
+// `mail denis@dnix.io`. "Wait for the input" is "wait for the login".
 async function bootedTerminal(page) {
-  await page.goto('/?view=term');
+  await page.goto('/');
   const input = page.locator('#cmdline');
   await expect(input).toBeVisible({ timeout: 15000 });
   return input;
 }
 
-test('boots through the ssh login into a live prompt', async ({ page }) => {
+test('boots through the ssh login into a live, prefilled prompt', async ({ page }) => {
   const input = await bootedTerminal(page);
-  await expect(page.locator('.screen')).toContainText('ssh guest@dnix.io');
-  await expect(page.locator('.screen')).toContainText('Last login:');
+  await expect(page.locator('#screen')).toContainText('ssh guest@dnix.io');
+  await expect(page.locator('#screen')).toContainText('Last login:');
   await expect(input).toBeFocused();
+  await expect(input).toHaveValue('mail denis@dnix.io');
 });
 
-test('runs commands typed at the prompt', async ({ page }) => {
+test('Enter on the prefilled prompt opens a mailto', async ({ page }) => {
+  const input = await bootedTerminal(page);
+  // Catch the mail link's click before the browser hands it to a mail app.
+  await page.evaluate(() => {
+    document.addEventListener('click', (e) => {
+      const a = (e.target as HTMLElement).closest('a[href^="mailto:"]');
+      if (a) {
+        e.preventDefault();
+        (window as any).__mailto = a.getAttribute('href');
+      }
+    }, true);
+  });
+  await input.press('Enter');
+  await expect.poll(() => page.evaluate(() => (window as any).__mailto))
+    .toBe('mailto:denis@dnix.io?subject=20%20minutes');
+  // The prompt offers it again for next time.
+  await expect(input).toHaveValue('mail denis@dnix.io');
+});
+
+test('typing replaces the prefill and runs commands', async ({ page }) => {
   const input = await bootedTerminal(page);
   await input.pressSequentially('projects');
+  await expect(input).toHaveValue('projects');
   await input.press('Enter');
-  const screen = page.locator('.screen');
+  const screen = page.locator('#screen');
   await expect(screen).toContainText('gitknown');
-  await expect(screen).toContainText('precisioncoatpainting.com.au');
+  await expect(screen).toContainText('shelf.dnix.io');
 });
 
 test('tab completes command names', async ({ page }) => {
@@ -32,65 +53,72 @@ test('tab completes command names', async ({ page }) => {
   await expect(input).toHaveValue('whoami');
 });
 
+test('history recalls the last command', async ({ page }) => {
+  const input = await bootedTerminal(page);
+  await input.pressSequentially('stack');
+  await input.press('Enter');
+  await input.press('ArrowUp');
+  await expect(input).toHaveValue('stack');
+});
+
 test('tmux windows run their command and take the active mark', async ({ page }) => {
   await bootedTerminal(page);
-  await page.locator('.tm-win', { hasText: '2:projects' }).click();
-  await expect(page.locator('.screen')).toContainText('selected work');
-  await expect(page.locator('.tm-win.active')).toHaveText('2:projects*');
+  await page.locator('.tm-win', { hasText: '1:work' }).click();
+  await expect(page.locator('#screen')).toContainText('working with me');
+  await expect(page.locator('.tm-win.active')).toHaveText('1:work*');
+  await expect(page.locator('#pane-hero')).toHaveClass(/is-session/);
 });
 
 test('unknown commands fail politely', async ({ page }) => {
   const input = await bootedTerminal(page);
   await input.pressSequentially('vim');
   await input.press('Enter');
-  await expect(page.locator('.screen')).toContainText('command not found: vim');
+  await expect(page.locator('#screen')).toContainText('command not found: vim');
 });
 
-test('exit logs out: collapses the dock, clears, and re-boots on reopen', async ({ page }) => {
-  await page.goto('/');
-  await page.locator('#dockhandle').click();
-  const input = page.locator('#cmdline');
-  await expect(input).toBeVisible({ timeout: 15000 });
-
+test('exit logs out, clears, and logs back in', async ({ page }) => {
+  const input = await bootedTerminal(page);
   await input.pressSequentially('exit');
   await input.press('Enter');
-  await expect(page.locator('.screen')).toContainText('Connection to dnix.io closed.');
+  const screen = page.locator('#screen');
+  await expect(screen).toContainText('Connection to dnix.io closed.');
 
-  // Dock collapses and the screen wipes.
-  await expect(page.locator('body')).toHaveClass(/dock-collapsed/);
-  await expect(page.locator('.screen')).not.toContainText('Connection to dnix.io closed.');
-
-  // Reopening replays the login on a clean screen.
-  await page.locator('#dockhandle').click();
-  await expect(page.locator('.screen')).toContainText('ssh guest@dnix.io');
+  // The screen wipes and the login replays on a clean screen.
+  await expect(screen).not.toContainText('Connection to dnix.io closed.');
+  await expect(screen).toContainText('ssh guest@dnix.io');
+  await expect(input).toHaveValue('mail denis@dnix.io');
 });
 
-test('opens the terminal dock and remembers the choice', async ({ page }) => {
-  await page.goto('/');
-  // Default: the page is up, the dock is a collapsed strip.
-  await expect(page.locator('.site-tagline')).toBeVisible();
-  await expect(page.locator('body')).toHaveClass(/dock-collapsed/);
+test('ctrl-b moves pane focus, esc comes back to the prompt', async ({ page }) => {
+  const input = await bootedTerminal(page);
+  await expect(page.locator('#pane-hero')).toHaveClass(/is-focus/);
 
-  // Clicking the handle expands the dock over the still-visible page.
-  await page.locator('#dockhandle').click();
-  await expect(page.locator('body')).toHaveClass(/dock-open/);
-  await expect(page.locator('.site-tagline')).toBeVisible();
+  await page.keyboard.press('Control+b');
+  await page.keyboard.press('o');
+  await expect(page.locator('#pane-shelf')).toHaveClass(/is-focus/);
+  await expect(page.locator('#pane-hero')).not.toHaveClass(/is-focus/);
 
-  // The open state persists across a plain visit.
-  await page.goto('/');
-  await expect(page.locator('body')).toHaveClass(/dock-open/);
+  await page.keyboard.press('Control+b');
+  await page.keyboard.press('ArrowUp');
+  await expect(page.locator('#pane-auction')).toHaveClass(/is-focus/);
 
-  // But a direct terminal link still takes over the screen (full).
-  await page.goto('/?view=term');
-  await expect(page.locator('body')).toHaveClass(/dock-full/);
+  await page.keyboard.press('Escape');
+  await expect(page.locator('#pane-hero')).toHaveClass(/is-focus/);
+  await expect(input).toBeFocused();
 });
 
-// The page is the only crawlable text, so it's always in the DOM. Even in the
-// full-screen terminal it's present (visually hidden). Guards the SEO/GEO surface.
-test('renders the page content even under the full terminal', async ({ page }) => {
-  await page.goto('/?view=term');
-  await expect(page.locator('#site .site-lede').first()).toContainText('Denis Santos');
-  await expect(page.locator('body')).toHaveClass(/dock-full/);
+// The page is the only crawlable text, so it's rendered up front and needs no
+// typing: the h1, the finding, the synthetic label and the scrollback.
+test('renders the page content without typing', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('h1')).toContainText('I built the machine that picks which ad you see.');
+  await expect(page.locator('#site .sb-p').first()).toContainText('Denis Santos');
+  await expect(page.locator('#pane-shelf')).toContainText('10 of 12 sponsored');
+  await expect(page.locator('#pane-shelf a')).toHaveAttribute('href', 'https://shelf.dnix.io/?src=dnix');
+  await expect(page.locator('#pane-auction')).toContainText('# replay: synthetic example. made-up brands, not retailer data');
+  for (const id of ['whoami', 'work', 'tools', 'contact']) {
+    await expect(page.locator(`#sb-${id}`)).toBeAttached();
+  }
 });
 
 test('serves the static crawler files', async ({ request }) => {
@@ -109,16 +137,20 @@ test('serves the static crawler files', async ({ request }) => {
 // guards the mirrors against the drift a code review caught once: a
 // "Guardians Gamers" typo and an email/name mismatch shipping to crawlers.
 test('crawler surface agrees with the rendered site', async ({ page, request }) => {
-  await page.goto('/?view=term');
-  const projectNames = await page.locator('#site .card-name').allTextContents();
+  await page.goto('/');
+  const shelfName = await page.locator('#shelf-title').textContent();
+  const headline = await page.locator('h1').innerText();
   const html = await page.content();
   const llms = await (await request.get('/llms.txt')).text();
 
-  // Both live products must be named identically across page, llms.txt, JSON-LD.
-  for (const name of ['Guardian Gamers', 'Precision Coat']) {
-    expect(projectNames, 'rendered page').toContain(name);
-    expect(llms, 'llms.txt').toContain(name);
-  }
+  // The live product must be named identically across page, llms.txt, JSON-LD.
+  expect(shelfName, 'rendered page').toBe('Shelf Report');
+  expect(llms, 'llms.txt').toContain('Shelf Report');
+  expect(html).toContain('Shelf Report');
+  // The headline and the finding say the same thing in both places.
+  expect(llms).toContain(headline.replace(/\s+/g, ' ').trim());
+  expect(llms).toContain('Coles: 10 of 12 sponsored');
+  expect(llms).toContain('Woolworths: 6 of 12 sponsored');
   // The old typo must not resurface anywhere on the crawler surface.
   expect(llms).not.toContain('Guardians Gamers');
   expect(html).not.toContain('Guardians Gamers');
@@ -132,6 +164,7 @@ test('crawler surface agrees with the rendered site', async ({ page, request }) 
 test('has no horizontal overflow on a phone viewport', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await bootedTerminal(page);
+  await page.locator('.tm-win', { hasText: '2:tools' }).click();
   const overflows = await page.evaluate(
     () => document.documentElement.scrollWidth > document.documentElement.clientWidth,
   );

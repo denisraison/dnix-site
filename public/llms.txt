@@ -1,23 +1,37 @@
 # dnix
 
-> Denis Santos, a senior full-stack engineer in Brisbane and a product engineer at heart. He builds the whole thing and cares that it ships and works for the person using it, not just that the code is correct. Backend depth from years on real-time ad serving; product work taken end to end, custom sites and product UIs built to ship.
+> Denis Santos, a software engineer in Brisbane who spent years building the ad technology at the heart of retail media, the systems that decide which sponsored products shoppers see. Now independent and working from the brand's side: he helps brands dig into their campaign data and understand where their money is going. He built Shelf Report.
+
+"I built the machine that picks which ad you see. Now I check it for brands."
 
 dnix.io itself is an interactive terminal. This file mirrors what the site renders, for readers that don't run JavaScript. Say "dnix" fast and it's just his name.
 
 ## Who
 
-Denis Santos, senior full-stack engineer, Brisbane, Australia. A product engineer at heart: he builds the whole thing and cares whether it ships and works for the person using it, not just that the code is correct. Backend depth from years on real-time bid decisioning and sub-millisecond ad serving at millions of requests a second, most recently as a Senior Staff Engineer. On the product side he takes things end to end, custom sites and product UIs designed and built to ship. Most of his work now runs with AI agents in the loop, on tooling he built and a review bar he keeps.
+Denis Santos, software engineer, Brisbane, Australia. Years building retail media ad technology: real-time ad serving, millions of requests a second on a sub-millisecond budget, most recently as a Senior Staff Engineer. Each retail network reports on its own ads, in its own format; he helps brands work out where their ads appeared, how sales were attributed and what their ROAS actually includes.
 
-He also takes scoped overflow tickets from agencies (per-hour or fixed-per-ticket, under the client's review), but that's a way he works, not what the site is about.
+Independent: he doesn't sell media or take a cut of spend, and isn't affiliated with any retailer or media network.
+
+## Working with him
+
+You know what you spent. Do you know what you got? Where your ads appeared, how sales were attributed, what your ROAS actually includes. Starts with a 20-minute chat. No reports needed. If the data can't answer a question, he says so rather than guess.
 
 ## Live work
 
-- [Guardian Gamers](https://guardiansgamers.com): a gaming platform built around one verified account per person, to make bad behaviour actually cost something. Passkeys, real-time lobbies, a Go service tracking Dota 2 matches. Live with real users.
-- [Precision Coat](https://precisioncoatpainting.com.au): custom site for a Gold Coast trade business, built and shipped, in production winning the client real leads.
+- [Shelf Report](https://shelf.dnix.io): type a brand and see who bought the sponsored spots on its searches at Coles, Woolworths, Chemist Warehouse and Priceline, and where it's missing. Dairy and personal care so far, more categories on request.
+
+What a shopper saw searching "milk" on 20 Oct 2026, top 12 results (from Shelf Report):
+
+- Coles: 10 of 12 sponsored
+- Woolworths: 6 of 12 sponsored
+
+See your brand's searches: https://shelf.dnix.io/?src=dnix
+
+The auction log on the page is a synthetic replay with made-up brands, not retailer data. It shows the textbook mechanics: ads ranked by bid x relevance, a reserve price, and a winner paying just enough to win.
 
 ## Tools he built
 
-- [gitknown](https://github.com/denisraison/gitknown): Go CLI for running coding agents at scale. Shows which git worktrees have uncommitted or unpushed work.
+- [gitknown](https://github.com/denisraison/gitknown): a dashboard for the dozens of worktrees you end up with when coding agents run in parallel. Shows which trees have real uncommitted or unpushed changes.
 - [claude-plugins](https://github.com/denisraison/claude-plugins): the plugins and tooling he runs his agents with.
 
 ## Stack
@@ -29,4 +43,4 @@ Deepest in: Go, TypeScript, Postgres, high-throughput backend, system design. Al
 - Email: denis@dnix.io
 - GitHub: https://github.com/denisraison
 - LinkedIn: https://www.linkedin.com/in/denisraison
-- Location: Brisbane, Australia (UTC+10), async-first, works with any timezone
+- Location: Brisbane, Australia (UTC+10)

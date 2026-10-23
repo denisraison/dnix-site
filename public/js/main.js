@@ -1,12 +1,30 @@
-// Entry point: build the terminal, register the commands, wire the chrome,
-// pick a view, run the login sequence.
+// Entry point: render the panes and scrollback, build the terminal, register
+// the commands, wire the status bar and pane focus, log in.
 
 import { byId } from './util.js';
+import { renderSite, tailLog } from './site.js';
 import { createTerminal } from './terminal.js';
 import { buildCommands } from './commands.js';
 import { initTmux } from './tmux.js';
+import { initPanes } from './panes.js';
 import { runBoot } from './boot.js';
-import { initViews } from './view.js';
+
+const hero = byId('pane-hero');
+
+// Rendered first: this is the page's real text, so it has to be in the DOM for
+// crawlers. Contained, so a render failure can't take the terminal down too.
+try {
+  renderSite({
+    head: byId('herohead'),
+    hint: byId('hint'),
+    shelf: byId('pane-shelf'),
+    auction: byId('pane-auction'),
+    scrollback: byId('scrollback'),
+  });
+  tailLog(byId('pane-auction'));
+} catch (err) {
+  console.error('site render failed', err);
+}
 
 /** @type {ReturnType<typeof initTmux> | undefined} */
 let tmux;
@@ -14,45 +32,73 @@ const term = createTerminal({
   screen: byId('screen'),
   input: /** @type {HTMLInputElement} */ (byId('cmdline')),
   inputrow: byId('inputrow'),
-  onExec: (name) => tmux?.mark(name),
+  enter: /** @type {HTMLButtonElement} */ (byId('enter')),
+  onExec: (name) => {
+    tmux?.mark(name);
+    if (name !== 'mail') {
+      session(name !== 'clear');
+    }
+  },
+});
+
+/** @param {boolean} on */
+function session(on) {
+  hero.classList.toggle('is-session', on);
+}
+
+// On a phone, focusing the prompt throws up the keyboard over the answer, so
+// only fine pointers get the caret back automatically.
+const finePointer = window.matchMedia('(pointer: fine)').matches;
+
+// Esc lands here: out of the session view, back to the poster and the prompt.
+function focusPrompt() {
+  session(false);
+  term.prefill();
+  if (term.ready) {
+    term.focus();
+  }
+}
+
+const panes = initPanes({
+  panes: [hero, byId('pane-shelf'), byId('pane-auction')],
+  prefixEl: byId('tmprefix'),
+  focusHero: focusPrompt,
 });
 
 tmux = initTmux({
   windowsEl: byId('tmwindows'),
   clockEl: byId('clock'),
   onSelect: (cmd) => {
-    if (term.ready) {
-      term.exec(cmd);
+    if (!term.ready) {
+      return;
     }
-  },
-});
-
-// The ssh-login sequence plays the first time the terminal is revealed (open
-// or full), not on page load: a visit that never opens the dock never pays for
-// it, and opening from collapsed still gets the full boot.
-async function boot() {
-  await runBoot(term);
-  term.setReady();
-}
-
-const views = initViews({
-  siteEl: byId('site'),
-  handleEl: byId('dockhandle'),
-  hintEl: byId('dockhint'),
-  focusTerminal: () => {
-    if (term.ready) {
+    term.exec(cmd);
+    panes.setActive(hero, { move: false });
+    if (finePointer) {
       term.focus();
     }
+    if (hero.getBoundingClientRect().top < 0) {
+      hero.scrollIntoView({ block: 'start' });
+    }
   },
-  onFirstReveal: boot,
 });
 
-// Register commands last: `exit` needs views.exitTerminal to collapse the dock.
-term.register(buildCommands(term, { onExit: views.exitTerminal }));
-
-// Wait for load, not module eval, so the typing starts after the font is in.
-// setDock runs the boot on first reveal; a collapsed start defers it until the
-// dock is opened. Nothing to arm here (a collapsed terminal can't be typed in).
-window.addEventListener('load', () => {
-  views.setDock(views.initialDock());
+// A click on the hero's bare yellow puts the caret back in the prompt, unless
+// it was a link, a button, or the end of a text selection.
+hero.addEventListener('click', (e) => {
+  const t = /** @type {HTMLElement} */ (e.target);
+  if (!finePointer || !term.ready || t.closest('a, button') || String(getSelection())) {
+    return;
+  }
+  term.focus();
 });
+
+term.register(buildCommands(term, {
+  onExit: () => {
+    session(false);
+    term.clear();
+    runBoot(term);
+  },
+}));
+
+runBoot(term, { focus: finePointer });

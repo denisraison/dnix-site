@@ -1,0 +1,305 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-23T01:32:31.813Z",
+  "title": "Design System: dnix",
+  "extensions": {
+    "colorMeta": {
+      "sun": {
+        "role": "primary",
+        "displayName": "Signal Yellow",
+        "canonical": "#ffd60a",
+        "tonalRamp": [
+          "oklch(15% 0.090 94.8)",
+          "oklch(26% 0.090 94.8)",
+          "oklch(38% 0.181 94.8)",
+          "oklch(50% 0.181 94.8)",
+          "oklch(62% 0.181 94.8)",
+          "oklch(73% 0.181 94.8)",
+          "oklch(84% 0.181 94.8)",
+          "oklch(95% 0.090 94.8)"
+        ]
+      },
+      "paid": {
+        "role": "secondary",
+        "displayName": "Paid Pink",
+        "canonical": "#ff3d7f",
+        "tonalRamp": [
+          "oklch(15% 0.115 6.1)",
+          "oklch(26% 0.115 6.1)",
+          "oklch(38% 0.230 6.1)",
+          "oklch(50% 0.230 6.1)",
+          "oklch(62% 0.230 6.1)",
+          "oklch(73% 0.230 6.1)",
+          "oklch(84% 0.230 6.1)",
+          "oklch(95% 0.115 6.1)"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Terminal Ink",
+        "canonical": "#0c0c0b",
+        "tonalRamp": [
+          "oklch(15% 0.002 106.6)",
+          "oklch(26% 0.002 106.6)",
+          "oklch(38% 0.002 106.6)",
+          "oklch(50% 0.002 106.6)",
+          "oklch(62% 0.002 106.6)",
+          "oklch(73% 0.002 106.6)",
+          "oklch(84% 0.002 106.6)",
+          "oklch(95% 0.002 106.6)"
+        ]
+      },
+      "ink-raised": {
+        "role": "neutral",
+        "displayName": "Raised Ink",
+        "canonical": "#2a2a28",
+        "tonalRamp": [
+          "oklch(15% 0.004 106.6)",
+          "oklch(26% 0.004 106.6)",
+          "oklch(38% 0.004 106.6)",
+          "oklch(50% 0.004 106.6)",
+          "oklch(62% 0.004 106.6)",
+          "oklch(73% 0.004 106.6)",
+          "oklch(84% 0.004 106.6)",
+          "oklch(95% 0.004 106.6)"
+        ]
+      },
+      "paper": {
+        "role": "neutral",
+        "displayName": "Paper",
+        "canonical": "#f2f2ee",
+        "tonalRamp": [
+          "oklch(15% 0.005 106.5)",
+          "oklch(26% 0.005 106.5)",
+          "oklch(38% 0.005 106.5)",
+          "oklch(50% 0.005 106.5)",
+          "oklch(62% 0.005 106.5)",
+          "oklch(73% 0.005 106.5)",
+          "oklch(84% 0.005 106.5)",
+          "oklch(95% 0.005 106.5)"
+        ]
+      },
+      "ash": {
+        "role": "neutral",
+        "displayName": "Ash",
+        "canonical": "#8c8c88",
+        "tonalRamp": [
+          "oklch(15% 0.006 106.6)",
+          "oklch(26% 0.006 106.6)",
+          "oklch(38% 0.006 106.6)",
+          "oklch(50% 0.006 106.6)",
+          "oklch(62% 0.006 106.6)",
+          "oklch(73% 0.006 106.6)",
+          "oklch(84% 0.006 106.6)",
+          "oklch(95% 0.006 106.6)"
+        ]
+      },
+      "sun-dim": {
+        "role": "neutral",
+        "displayName": "Sun Dim",
+        "canonical": "#5c4f00",
+        "tonalRamp": [
+          "oklch(15% 0.088 98.3)",
+          "oklch(26% 0.088 98.3)",
+          "oklch(38% 0.088 98.3)",
+          "oklch(50% 0.088 98.3)",
+          "oklch(62% 0.088 98.3)",
+          "oklch(73% 0.088 98.3)",
+          "oklch(84% 0.088 98.3)",
+          "oklch(95% 0.088 98.3)"
+        ]
+      },
+      "paper-dim": {
+        "role": "neutral",
+        "displayName": "Paper Dim",
+        "canonical": "#5e5e59",
+        "tonalRamp": [
+          "oklch(15% 0.008 106.7)",
+          "oklch(26% 0.008 106.7)",
+          "oklch(38% 0.008 106.7)",
+          "oklch(50% 0.008 106.7)",
+          "oklch(62% 0.008 106.7)",
+          "oklch(73% 0.008 106.7)",
+          "oklch(84% 0.008 106.7)",
+          "oklch(95% 0.008 106.7)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "The hero sentence only. Wide and heavy; collapses to headline size once a command runs."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Shelf pane name and scrollback section headings."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "The closing call to action in scrollback."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Byline, shell output and scrollback paragraphs. 0.9375rem on phones."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Pane titles, tmux bar, prompt hint, scrollback notes. Condensed."
+      },
+      "log": {
+        "displayName": "Log",
+        "purpose": "Auction log lines, most condensed, on a 12ch timestamp column."
+      }
+    },
+    "shadows": [],
+    "motion": [
+      {
+        "name": "ease",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "The only easing: focus dim and log line entry."
+      },
+      {
+        "name": "focus-dim",
+        "value": "color 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Pane text dims or brightens as focus moves."
+      },
+      {
+        "name": "log-line-in",
+        "value": "0.5s rise from 0.5em, 140ms stagger after a 350ms beat",
+        "purpose": "Auction log streaming in. Removed under reduced motion."
+      },
+      {
+        "name": "cursor-blink",
+        "value": "1.05s steps(1) infinite",
+        "purpose": "Block cursor while the prompt has focus. Removed under reduced motion."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "phone",
+        "value": "max-width: 899px"
+      },
+      {
+        "name": "desktop",
+        "value": "min-width: 900px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Enter Key",
+      "kind": "button",
+      "refersTo": "button-key",
+      "description": "The on-screen Enter key on the hero pane; the Shelf link uses the same key.",
+      "html": "<div class=\"ds-yellow\"><button class=\"ds-key\" type=\"button\">email me</button></div>",
+      "css": ".ds-yellow { background: #ffd60a; padding: 24px; font-family: 'Martian Mono', ui-monospace, monospace; } .ds-key { min-height: 44px; padding: 0 1.25rem; background: #0c0c0b; color: #ffd60a; border: none; border-radius: 0; font: inherit; font-weight: 700; cursor: pointer; } .ds-key:hover { background: #2a2a28; } .ds-key:focus-visible { outline: 2px solid #0c0c0b; outline-offset: 3px; }"
+    },
+    {
+      "name": "Shell Prompt",
+      "kind": "input",
+      "refersTo": "pane-hero",
+      "description": "The live prompt: bold PS1, plain-text input, block cursor, hint below.",
+      "html": "<div class=\"ds-yellow\"><div class=\"ds-prompt\"><b>guest@dnix:~$</b><span>mail denis@dnix.io</span><span class=\"ds-cursor\"></span></div><p class=\"ds-hint\">press enter to email me about a 20-minute chat, or type help to look around.</p></div>",
+      "css": ".ds-yellow { background: #ffd60a; color: #0c0c0b; padding: 24px; font-family: 'Martian Mono', ui-monospace, monospace; font-size: 1rem; line-height: 1.6; } .ds-prompt { display: flex; align-items: center; gap: 1ch; } .ds-prompt b { font-weight: 700; } .ds-cursor { width: 0.62em; height: 1.15em; background: currentColor; border: 2px solid currentColor; margin-left: -1ch; animation: ds-blink 1.05s steps(1) infinite; } @keyframes ds-blink { 50% { opacity: 0; } } .ds-hint { margin-top: 10px; font-size: 0.8125rem; max-width: 72ch; } @media (prefers-reduced-motion: reduce) { .ds-cursor { animation: none; } }"
+    },
+    {
+      "name": "tmux Status Bar",
+      "kind": "nav",
+      "refersTo": "tmux-bar",
+      "description": "Bottom-pinned navigation: session name, numbered windows, host and clock.",
+      "html": "<nav class=\"ds-tmux\"><b>[dnix]</b><button class=\"ds-win\">0:whoami</button><button class=\"ds-win ds-active\">1:work*</button><button class=\"ds-win\">2:tools</button><button class=\"ds-win\">3:contact</button><span class=\"ds-right\">guest@dnix.io 11:28</span></nav>",
+      "css": ".ds-tmux { display: flex; align-items: stretch; gap: 1ch; height: 40px; padding: 0 1ch; background: #f2f2ee; color: #0c0c0b; font-family: 'Martian Mono', ui-monospace, monospace; font-size: 0.8125rem; font-stretch: 87.5%; } .ds-tmux b { align-self: center; font-weight: 700; } .ds-win { padding: 0 0.75ch; background: none; border: none; border-radius: 0; color: inherit; font: inherit; cursor: pointer; } .ds-win:hover { text-decoration: underline; text-underline-offset: 0.22em; } .ds-win:focus-visible { outline: 2px solid #0c0c0b; outline-offset: -4px; } .ds-active { background: #0c0c0b; color: #f2f2ee; font-weight: 700; } .ds-active:focus-visible { outline-color: #ffd60a; } .ds-right { margin-left: auto; align-self: center; }"
+    },
+    {
+      "name": "Active tmux Window",
+      "kind": "nav",
+      "refersTo": "tmux-window-active",
+      "description": "The inverted ink block marking the current section, tmux style.",
+      "html": "<div class=\"ds-bar\"><span class=\"ds-win-on\">1:work*</span></div>",
+      "css": ".ds-bar { background: #f2f2ee; padding: 8px; font-family: 'Martian Mono', ui-monospace, monospace; font-size: 0.8125rem; font-stretch: 87.5%; } .ds-win-on { display: inline-block; padding: 0 0.75ch; background: #0c0c0b; color: #f2f2ee; font-weight: 700; }"
+    },
+    {
+      "name": "Shelf Pane",
+      "kind": "card",
+      "refersTo": "pane-shelf",
+      "description": "Off-white pane with the real finding: name, lede, slot strips, ink key link. Square, no shadow.",
+      "html": "<section class=\"ds-shelf\"><h2>Shelf Report</h2><p class=\"ds-lede\">What a shopper saw searching \"milk\", top 12 results:</p><div class=\"ds-row\"><b>Coles</b> 10 of 12 sponsored<div class=\"ds-slots\"><i class=\"p\"></i><i class=\"p\"></i><i class=\"p\"></i><i class=\"p\"></i><i class=\"p\"></i><i class=\"p\"></i><i class=\"p\"></i><i class=\"p\"></i><i class=\"p\"></i><i class=\"p\"></i><i></i><i></i></div></div><a class=\"ds-link\" href=\"#\">see your brand's searches at shelf.dnix.io</a></section>",
+      "css": ".ds-shelf { background: #f2f2ee; color: #0c0c0b; padding: clamp(20px, 1.75vw, 24px); font-family: 'Martian Mono', ui-monospace, monospace; font-size: 1rem; line-height: 1.6; display: flex; flex-direction: column; } .ds-shelf h2 { font-size: 1.25rem; font-weight: 800; font-stretch: 112.5%; line-height: 1.2; margin: 0; } .ds-lede { margin: 0.5rem 0 0; font-size: 0.8125rem; font-weight: 500; } .ds-row { margin-top: 1.25rem; } .ds-row b { font-weight: 700; margin-right: 1ch; } .ds-slots { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 3px; margin-top: 0.4rem; max-width: 26rem; } .ds-slots i { aspect-ratio: 1; border: 2px solid #0c0c0b; } .ds-slots i.p { background: #ff3d7f; border-color: #ff3d7f; } .ds-link { align-self: flex-start; display: inline-flex; align-items: center; min-height: 44px; margin-top: 1.5rem; padding: 0.6rem 1.25rem; background: #0c0c0b; color: #ffd60a; font-weight: 700; text-decoration: none; } .ds-link:hover { background: #2a2a28; } .ds-link:focus-visible { outline: 2px solid #0c0c0b; outline-offset: 3px; }"
+    },
+    {
+      "name": "Auction Log",
+      "kind": "custom",
+      "refersTo": "pane-auction",
+      "description": "Synthetic sponsored-search replay tailing on ink; paid lines pink and bold, lines rise in on a stagger.",
+      "html": "<section class=\"ds-auction\"><p class=\"ds-title\">$ tail -f auction.log</p><div class=\"ds-line ds-comment\" style=\"--d:0ms\"><span></span><span># replay: synthetic example. made-up brands</span></div><div class=\"ds-line\" style=\"--d:140ms\"><span>14:02:11.204</span><span>search \"milk\", 2 sponsored slots</span></div><div class=\"ds-line ds-paid\" style=\"--d:280ms\"><span>14:02:11.205</span><span>slot 1  cloudhaven lite 2L  pays $1.20</span></div><div class=\"ds-line\" style=\"--d:420ms\"><span>14:02:11.205</span><span>done in 0.41ms</span></div></section>",
+      "css": ".ds-auction { background: #0c0c0b; color: #f2f2ee; padding: 24px; font-family: 'Martian Mono', ui-monospace, monospace; font-size: 0.8125rem; } .ds-title { font-weight: 700; font-stretch: 87.5%; margin: 0 0 0.75rem; } .ds-line { display: grid; grid-template-columns: 12ch minmax(0, 1fr); column-gap: 1.5ch; font-stretch: 75%; line-height: 1.55; color: #f2f2ee; animation: ds-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) var(--d, 0ms) both; } .ds-comment { color: #8c8c88; } .ds-paid { color: #ff3d7f; font-weight: 700; } @keyframes ds-in { from { opacity: 0; transform: translateY(0.5em); } } @media (prefers-reduced-motion: reduce) { .ds-line { animation: none; } }"
+    },
+    {
+      "name": "Scrollback Section",
+      "kind": "custom",
+      "description": "Below-the-fold content on the ink frame, headed like a command, with yellow terms and links.",
+      "html": "<section class=\"ds-sb\"><h2><span class=\"ds-ps\">$ </span>work <span class=\"ds-note\"># making sense of your retail media spend</span></h2><dl><div class=\"ds-dl\"><dt>how it starts</dt><dd>a 20-minute chat. No reports needed</dd></div><div class=\"ds-dl\"><dt>email</dt><dd><a href=\"#\">denis@dnix.io</a></dd></div></dl></section>",
+      "css": ".ds-sb { background: #0c0c0b; color: #f2f2ee; padding: 32px; font-family: 'Martian Mono', ui-monospace, monospace; font-size: 1rem; line-height: 1.6; max-width: 76ch; } .ds-sb h2 { font-size: 1.25rem; font-weight: 800; font-stretch: 112.5%; line-height: 1.3; margin: 0 0 1.5rem; } .ds-ps { color: #ffd60a; } .ds-note { font-size: 0.8125rem; font-weight: 400; font-stretch: 87.5%; color: #8c8c88; } .ds-sb dl { display: grid; gap: 1.25rem; margin: 0; } .ds-dl { display: grid; grid-template-columns: 18ch minmax(0, 1fr); column-gap: 2ch; } .ds-dl dt { font-weight: 700; color: #ffd60a; } .ds-dl dd { margin: 0; } .ds-sb a { color: #ffd60a; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.22em; } .ds-sb a:hover { text-decoration-thickness: 2px; } .ds-sb a:focus-visible { outline: 2px solid #ffd60a; outline-offset: 3px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Live Session",
+    "overview": "The site is a tmux session left running on an ad tech engineer's screen. Three panes sit on a near-black frame, each one a solid field of colour: a signal-yellow hero pane with a working shell prompt, a black pane tailing a synthetic auction log, and an off-white pane holding a real Shelf Report finding. A tmux status bar pins the bottom edge and acts as navigation. Below the first screen the session keeps going as scrollback on the black frame, written as command output.\n\nEverything is one monospace face. Hierarchy comes from Martian Mono's width and weight axes, not from extra faces, tints or decoration. The surface is flat and square: no rounded corners, no shadows, no gradients, no glow, no scanlines. Depth is focus, shown by brightness. The focused pane burns at full ink and the others dim their text, never their field.\n\nMotion is one orchestrated beat: the auction log streaming in line by line, plus the focus dim moving between panes. The block cursor blinks. With reduced motion the final frame shows at once.",
+    "keyCharacteristics": [
+      "Colour owns whole pane fields, separated by a 4px ink gutter.",
+      "Martian Mono only, width (75% to 112.5%) and weight (300 to 800) do the hierarchy.",
+      "Pink means a paid placement and nothing else.",
+      "The terminal is real: a prompt, a block cursor, an Enter key you can reach with a thumb.",
+      "Flat and square everywhere; focus is brightness, not a ring or a lift."
+    ],
+    "rules": [
+      {
+        "name": "The Paid Pink Rule",
+        "body": "Pink is only ever a paid placement. It never marks a link, a hover, a brand moment or an error. The same meaning holds on Shelf Report, so a buyer who has seen pink squares there reads them the same way here.",
+        "section": "colors"
+      },
+      {
+        "name": "The Whole Field Rule",
+        "body": "Colour fills a whole pane or not at all. No tints, no gradients, no coloured panels inside a pane.",
+        "section": "colors"
+      },
+      {
+        "name": "The Dim the Ink Rule",
+        "body": "An unfocused pane dims its text to a derived ink that still clears AA, and keeps its field at full colour. Opacity is never used for the dim: it greys the off-white and turns the pink magenta.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Face Rule",
+        "body": "Martian Mono is the only typeface. Hierarchy is width and weight, never a second family.",
+        "section": "typography"
+      },
+      {
+        "name": "The Four Sizes Rule",
+        "body": "Display, lead (1.25rem), body (1rem) and small (0.8125rem) are the whole scale. A new role picks one of the four and changes width or weight.",
+        "section": "typography"
+      },
+      {
+        "name": "The Brightness Is Focus Rule",
+        "body": "A pane shows focus by brightness, not by an outline, a shadow or a lift. Interactive elements inside panes still get a 2px focus outline.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do give each pane one solid field from the four colours and dim only its text when unfocused (`sun-dim`, `paper-dim`, `ash`).",
+      "Do build hierarchy from Martian Mono's width (75%, 87.5%, 100%, 112.5%) and weight (300 to 800) inside the four sizes.",
+      "Do keep pink for paid placements, matching Shelf Report.",
+      "Do write labels and headings as terminal lines: `$ command`, `# comment`, tmux window names.",
+      "Do keep every pane's content in the DOM and readable without typing.",
+      "Do show the final frame with no animation under `prefers-reduced-motion`.",
+      "Do keep tap targets at 44px or more and the prompt in thumb reach on phones."
+    ],
+    "donts": [
+      "Don't use cards, rounded chips or pills, glow, scanlines, gradients or shadows.",
+      "Don't round a corner.",
+      "Don't dim a pane with opacity.",
+      "Don't use pink for links, hovers, accents or errors.",
+      "Don't add a second typeface or set system fonts for display.",
+      "Don't trap vertical scrolling in an inner scroller on phones; the page itself scrolls."
+    ]
+  }
+}

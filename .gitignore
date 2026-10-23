@@ -6,3 +6,4 @@ result
 .env.*
 .dev.vars
 .wrangler/
+.impeccable/questions/

@@ -1,93 +1,111 @@
 // The command set. Pure content-over-DATA; all printing goes through the
 // terminal's print API.
 
-import { DATA, LOGO, NAV } from './data.js';
+import { DATA, NAV, MORE } from './data.js';
 import { delay, escapeHtml as esc } from './util.js';
 
 /**
  * @param {import('./terminal.js').Terminal} term
- * @param {{onExit?: () => void}} [opts] onExit collapses the dock (see view.js)
+ * @param {{onExit?: () => void}} [opts] onExit re-runs the login (see main.js)
  */
 export function buildCommands(term, { onExit } = {}) {
   const { print, blank, clear } = term;
+  const ct = DATA.contact;
+
+  /**
+   * A key/value row whose value wraps under itself, not under the key.
+   * @param {string} k
+   * @param {string} vHtml
+   */
+  const row = (k, vHtml) => print(`  <b class="k">${esc(k)}</b><span>${vHtml}</span>`, 'row');
+
+  /** @param {typeof DATA.projects[number]} p */
+  function project(p) {
+    print(`  <b>${esc(p.name)}</b>  <span class="soft">${esc(p.tag)}</span>`);
+    print(`    ${esc(p.desc)}`);
+    print(`    <a href="https://${esc(p.url)}" target="_blank" rel="noopener">${esc(p.url)}</a>`);
+    blank();
+  }
 
   /** @type {Record<string, () => void>} */
   const commands = {
     help() {
       blank();
-      print(`<span class="gold">available commands</span>`);
+      print(`<b>available commands</b>`);
       // NAV is the shared source (see data.js); clear/help are utility commands.
-      const rows = [...NAV, ["clear", "wipe the screen"], ["help", "this list"]];
-      rows.forEach(([c, d]) => print(`  <span class="blue">${c.padEnd(10)}</span><span class="muted">${d}</span>`));
+      [...NAV, ...MORE, ["clear", "wipe the screen"], ["help", "this list"]]
+        .forEach(([c, d]) => row(c, `<span class="soft">${esc(d)}</span>`));
       blank();
-      print(`  <span class="dim">↑↓ history · tab completes · ctrl-l clears · the bar below is clickable</span>`);
+      print(`  <span class="soft">↑↓ history · tab completes · ctrl-l clears · ctrl-b o moves between panes · esc comes back here</span>`);
       blank();
     },
 
     whoami() {
       blank();
-      print(`<span class="logo">${LOGO}</span>`);
-      print(`  <span class="muted">${esc(DATA.brand)} :: ${esc(DATA.tagline)}</span>`);
-      blank();
       DATA.who.forEach((para, i) => {
         if (i > 0) { blank(); }
-        print(`  <span class="white">${esc(para)}</span>`);
+        print(`  ${esc(para)}`);
       });
       blank();
-      print(`  <span class="muted">the page you're reading is the kind of thing I build. a working terminal,</span>`);
-      print(`  <span class="muted">not a screenshot. no framework, no build step. view source, it's unminified.</span>`);
-      blank();
-    },
-
-    projects() {
-      blank();
-      print(`<span class="gold">selected work</span> <span class="muted">· live products, then the tools I built</span>`);
-      blank();
-      DATA.projects.forEach((p, i) => {
-        print(`  <span class="blue">[${i + 1}]</span> <span class="white">${esc(p.name)}</span>  <span class="chip">${esc(p.tag)}</span>`);
-        print(`      <span class="muted">${esc(p.desc)}</span>`);
-        if (p.url) {
-          const href = esc(p.url.replace(/^https?:\/\//, ''));
-          print(`      <a href="https://${href}" target="_blank" rel="noopener">${esc(p.url)}</a>`);
-        }
-        blank();
-      });
-    },
-
-    stack() {
-      blank();
-      print(`<span class="gold">stack</span>`);
-      for (const [group, items] of Object.entries(DATA.stack)) {
-        print(`  <span class="blue">${esc(group)}</span>`);
-        print(`    ${items.map((i) => `<span class="chip">${esc(i)}</span>`).join('')}`);
-      }
+      print(`  <span class="soft">the page you're reading is a working terminal, not a screenshot.</span>`);
+      print(`  <span class="soft">no framework, no build step. view source, it's unminified.</span>`);
       blank();
     },
 
     work() {
       blank();
-      print(`<span class="gold">working with me</span>`);
+      print(`<b>working with me</b>`);
       blank();
-      print(`  <span class="muted">I take on scoped client work: one hard, well-defined piece at a time,</span>`);
-      print(`  <span class="muted">done properly and shipped. here's how that goes.</span>`);
+      print(`  I help brands make sense of their retail media spend. here's how that starts.`);
       blank();
       DATA.model.forEach(([k, v]) => {
-        print(`  <span class="blue">${esc(k)}</span>`);
-        print(`    <span class="muted">${esc(v)}</span>`);
+        print(`  <b>${esc(k)}</b>`);
+        print(`    ${esc(v)}`);
       });
       blank();
-      print(`  <span class="muted">got one? run <span class="gold">contact</span> and I'll tell you straight whether it's a fit.</span>`);
+      print(`  <span class="soft">want 20 minutes? press enter, the prompt already says mail.</span>`);
+      blank();
+    },
+
+    tools() {
+      blank();
+      print(`<b>tools</b> <span class="soft">· built for my own work, in the open</span>`);
+      blank();
+      DATA.projects.filter((p) => p.tag.startsWith('tool')).forEach(project);
+    },
+
+    projects() {
+      blank();
+      print(`<b>selected work</b> <span class="soft">· what I'm running now, then the tools I built</span>`);
+      blank();
+      DATA.projects.forEach(project);
+    },
+
+    stack() {
+      blank();
+      print(`<b>stack</b>`);
+      for (const [group, items] of Object.entries(DATA.stack)) {
+        row(group, esc(items.join(', ')));
+      }
       blank();
     },
 
     contact() {
       blank();
-      print(`<span class="gold">contact</span>`);
-      const ct = DATA.contact;
-      print(`  <span class="blue">email   </span> <a href="mailto:${esc(ct.email)}">${esc(ct.email)}</a>`);
-      print(`  <span class="blue">github  </span> <a href="https://${esc(ct.github)}" target="_blank" rel="noopener">${esc(ct.github)}</a>`);
-      print(`  <span class="blue">linkedin</span> <a href="https://${esc(ct.linkedin)}" target="_blank" rel="noopener">${esc(ct.linkedin)}</a>`);
-      print(`  <span class="blue">location</span> <span class="muted">${esc(ct.location)}</span>`);
+      print(`<b>contact</b>`);
+      row('email', `<a href="mailto:${esc(ct.email)}">${esc(ct.email)}</a>`);
+      row('github', `<a href="https://${esc(ct.github)}" target="_blank" rel="noopener">${esc(ct.github)}</a>`);
+      row('linkedin', `<a href="https://${esc(ct.linkedin)}" target="_blank" rel="noopener">${esc(ct.linkedin)}</a>`);
+      row('location', esc(ct.location));
+      blank();
+    },
+
+    // The prompt's prefill. The printed link is the fallback when no mail app
+    // picks up the programmatic click.
+    mail() {
+      const href = `mailto:${ct.email}?subject=${encodeURIComponent(DATA.mailSubject)}`;
+      const line = print(`  opening your mail app: <a class="mailto" href="${esc(href)}">${esc(ct.email)}</a>`);
+      line.querySelector('a')?.click();
       blank();
     },
 
@@ -95,22 +113,22 @@ export function buildCommands(term, { onExit } = {}) {
 
     // easter eggs
     ls() {
-      print(`  <span class="muted">whoami  projects  stack  work  contact</span> <span class="dim">· they're commands, run them</span>`);
+      print(`  ${NAV.map(([c]) => c).join('  ')} <span class="soft">· they're commands, run them</span>`);
     },
     sudo() {
-      print(`  <span class="muted">denis is not in the sudoers file. This incident will be reported.</span>`);
+      print(`  denis is not in the sudoers file. This incident will be reported.`);
     },
-    // Log out for real: show the message, let it sit a beat, collapse the dock
-    // back down, then wipe the screen so the next open re-boots fresh.
+    // Log out for real: show the message, let it sit a beat, then the caller
+    // wipes the screen and runs the login again.
     async exit() {
-      print(`  <span class="muted">logout</span>`);
-      print(`  <span class="dim">Connection to dnix.io closed.</span>`);
+      print(`  logout`);
+      print(`  <span class="soft">Connection to dnix.io closed.</span>`);
       if (!onExit) {
         return;
       }
+      term.logout();
       await delay(650);
       onExit();
-      clear();
     },
   };
 

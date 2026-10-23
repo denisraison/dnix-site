@@ -1,4 +1,3 @@
-export const REDUCED_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /** @param {number} ms */
 export const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
