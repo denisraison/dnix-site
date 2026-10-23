@@ -170,3 +170,31 @@ test('has no horizontal overflow on a phone viewport', async ({ page }) => {
   );
   expect(overflows).toBe(false);
 });
+
+// The terminal is a scroll area inside the page. It must hand the wheel on to
+// the page once it has nothing left to scroll, or the page below is unreachable.
+test('the wheel over the terminal scrolls the page', async ({ page }) => {
+  const input = await bootedTerminal(page);
+  /** @param {import('@playwright/test').Page} p */
+  const wheelOverScreen = async (p) => {
+    const box = await p.locator('#screen').boundingBox();
+    await p.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+    // two gestures: Chromium latches one burst to the inner scroller
+    for (const pause of [700, 0]) {
+      for (let i = 0; i < 6; i++) {
+        await p.mouse.wheel(0, 300);
+        await p.waitForTimeout(50);
+      }
+      await p.waitForTimeout(pause);
+    }
+  };
+
+  await wheelOverScreen(page);
+  await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(0);
+
+  await input.fill('whoami');
+  await input.press('Enter');
+  await page.evaluate(() => scrollTo(0, 0));
+  await wheelOverScreen(page);
+  await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(0);
+});

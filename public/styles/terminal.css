@@ -9,7 +9,6 @@
   display: flex;
   flex-direction: column;
   overflow-y: auto;
-  overscroll-behavior: contain;
   margin-top: 1.5rem;
   scrollbar-width: thin;
   scrollbar-color: var(--ink) transparent;
@@ -141,7 +140,7 @@
   .tm-win { padding: 0 0.75ch; }
   .enter { flex: 1 0 100%; min-height: 52px; }
   /* An inner scroller on a phone traps the thumb; let output flow into the page. */
-  .screen { flex: none; overflow: visible; overscroll-behavior: auto; }
+  .screen { flex: none; overflow: visible; }
 }
 
 @media (prefers-reduced-motion: reduce) {
