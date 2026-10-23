@@ -198,3 +198,36 @@ test('the wheel over the terminal scrolls the page', async ({ page }) => {
   await wheelOverScreen(page);
   await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(0);
 });
+
+// On the stacked phone layout the windows navigate: they jump to their section
+// below and leave the hero, and its email button, alone.
+test('phone: windows jump to their section instead of printing', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await bootedTerminal(page);
+  const enterTop = await page.locator('#enter').evaluate((el) => el.getBoundingClientRect().top + scrollY);
+
+  for (const name of ['work', 'contact']) {
+    await page.locator('.tm-win', { hasText: name }).click();
+    // at the top of the screen, or as close as the end of the page allows
+    await expect.poll(() => page.locator(`#sb-${name}`).evaluate((el) => {
+      const atEnd = scrollY >= document.documentElement.scrollHeight - innerHeight - 1;
+      return Math.abs(el.getBoundingClientRect().top) < 40 || atEnd;
+    })).toBe(true);
+    await expect(page.locator('.tm-win.active')).toContainText(name);
+  }
+  await expect(page.locator('#screen')).not.toContainText('working with me');
+  const enterTopAfter = await page.locator('#enter').evaluate((el) => el.getBoundingClientRect().top + scrollY);
+  expect(enterTopAfter).toBe(enterTop);
+});
+
+test('phone: links are thumb-sized', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await bootedTerminal(page);
+  const heights = await page.locator('.tool dd a, .contact a, .shelf-link').evaluateAll(
+    (els) => els.map((el) => el.getBoundingClientRect().height),
+  );
+  expect(heights.length).toBeGreaterThan(0);
+  for (const h of heights) {
+    expect(h).toBeGreaterThanOrEqual(44);
+  }
+});

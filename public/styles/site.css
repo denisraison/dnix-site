@@ -184,8 +184,19 @@
   .ps1-user { display: none; }
   .headline { font-stretch: 87.5%; }
   .offer-row, .tool, .contact-row { grid-template-columns: minmax(0, 1fr); row-gap: 0.25rem; }
-  .tool dd a { white-space: normal; }
   .log-body { flex: none; height: calc(6 * 1.55em); }
+  /* No pane focus on touch, so nothing dims: a grey Shelf read as switched off. */
+  .pane-hero:not(.is-focus), .pane-shelf:not(.is-focus) { color: var(--ink); }
+  .pane-auction { --log: var(--paper); }
+  /* The windows jump here; land with a little air above the heading. */
+  .sb { scroll-margin-top: 16px; }
+  /* Thumb-sized links: 44px tall, the tool link on its own line. */
+  .tool dd a, .contact a { display: inline-flex; align-items: center; min-height: 44px; }
+  .tool dd a { display: flex; white-space: normal; overflow-wrap: anywhere; }
+}
+
+@media (max-width: 899px) and (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
 }
 
 @media (prefers-reduced-motion: reduce) {

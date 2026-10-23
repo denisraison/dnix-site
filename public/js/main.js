@@ -65,10 +65,20 @@ const panes = initPanes({
   focusHero: focusPrompt,
 });
 
+// The stacked phone layout (same breakpoint as site.css). There the windows are
+// navigation: printing into the hero pushed the email button away and later
+// output landed off screen.
+const stacked = window.matchMedia('(max-width: 899px)');
+
 tmux = initTmux({
   windowsEl: byId('tmwindows'),
   clockEl: byId('clock'),
   onSelect: (cmd) => {
+    if (stacked.matches) {
+      byId(`sb-${cmd}`).scrollIntoView({ block: 'start' });
+      tmux?.mark(cmd);
+      return;
+    }
     if (!term.ready) {
       return;
     }
@@ -82,6 +92,24 @@ tmux = initTmux({
     }
   },
 });
+
+// On the phone the window mark follows the scroll, so the bar says where you are.
+const visible = new Set();
+const spy = new IntersectionObserver((entries) => {
+  for (const e of entries) {
+    if (e.isIntersecting) {
+      visible.add(e.target.id);
+    } else {
+      visible.delete(e.target.id);
+    }
+  }
+  if (!stacked.matches) {
+    return;
+  }
+  const first = [...document.querySelectorAll('.sb')].find((s) => visible.has(s.id));
+  tmux?.mark(first ? first.id.slice(3) : '');
+}, { rootMargin: '-35% 0px -60% 0px' });
+document.querySelectorAll('.sb').forEach((s) => spy.observe(s));
 
 // A click on the hero's bare yellow puts the caret back in the prompt, unless
 // it was a link, a button, or the end of a text selection.
